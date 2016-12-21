@@ -1,0 +1,20 @@
+Package: source.maj
+Title: Mise a jour/Harmonise d'une liste de data frame et compilation dans un data frame unique
+Version: 0.1
+Authors@R: person("SIES", "Departement des outils d'aide a la decision", email = "ce.siesc3@education.gouv.fr", role = c("aut", "cre"))
+Description: Mise a jour/Harmonise d'une liste de data frame et compilation dans un data frame unique
+Depends:
+    R (>= 3.2.5)
+License: Etalab
+Encoding: UTF-8
+LazyData: true
+Imports:
+    divr,
+    pbapply,
+    importr,
+    dplyr,
+    tidyr,
+    purrr,
+    stringr,
+    lubridate
+RoxygenNote: 5.0.1
