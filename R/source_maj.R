@@ -108,7 +108,8 @@ renommer_champs <- function(table, table_rename, drop = TRUE) {
     colnames_maj <- colnames_maj[["rename"]]
 
     if (length(unique(colnames_maj)) != length(colnames_maj)) {
-      message("Doublon dans la table_rename sur le champ \"rename\"")
+      doublons <- which(table(colnames_maj) >= 2) %>% names()
+      message("Doublon dans la table_rename sur le champ \"rename\" : ", doublons)
       colnames_maj <- make.unique(colnames_maj)
     }
 
