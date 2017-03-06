@@ -85,6 +85,10 @@ liste_champs_unique <- function(import, table_rename, fichier_csv = "champs_uniq
 #' @export
 renommer_champs <- function(table, table_rename, drop = TRUE) {
 
+  if (is.null(table_rename)) {
+    return(table)
+  }
+  
   if (any(class(table) == "data.frame") == FALSE) {
 
     return(table)
