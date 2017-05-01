@@ -2,6 +2,8 @@
 
 export(liste_champs_unique)
 export(maj_source)
+export(recoder_champs)
+export(recoder_individu)
 export(renommer_champs)
 export(suppression_lignes_fin)
 export(to_date)
