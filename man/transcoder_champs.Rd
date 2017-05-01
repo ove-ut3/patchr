@@ -17,4 +17,3 @@ Un data frame dont les champs sont transcodés.
 \description{
 Transcode les champs d'un data frame selon une table de correspondance.
 }
-

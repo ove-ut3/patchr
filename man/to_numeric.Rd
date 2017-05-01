@@ -15,4 +15,3 @@ Un vecteur de type numérique.
 \description{
 Transcode un vecteur vers un type numérique.
 }
-

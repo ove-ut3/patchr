@@ -19,4 +19,3 @@ Un data frame unique
 \description{
 Met à jour/Harmonise une liste de data frame et les compile dans un data frame unique.
 }
-

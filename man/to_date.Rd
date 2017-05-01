@@ -15,4 +15,3 @@ Un vecteur de type date
 \description{
 Transcode un vecteur vers un type date
 }
-

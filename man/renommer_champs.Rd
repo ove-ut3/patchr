@@ -19,4 +19,3 @@ Un data frame dont les champs sont renommés.
 \description{
 Renomme les champs d'un data frame selon une table de correspondance.
 }
-

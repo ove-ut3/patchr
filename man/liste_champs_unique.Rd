@@ -19,4 +19,3 @@ Un vecteur de noms de champ.
 \description{
 Retourne la liste complète et dédoublonnée des champs de data frame
 }
-

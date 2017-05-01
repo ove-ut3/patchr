@@ -15,4 +15,3 @@ Un vecteur de type integer
 \description{
 Transcode un vecteur vers un type integer
 }
-

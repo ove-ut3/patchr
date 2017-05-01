@@ -19,4 +19,3 @@ un data frame.
 \description{
 Supprime les lignes d'une table selon les valeurs vides d'un champ ou une expression.
 }
-
