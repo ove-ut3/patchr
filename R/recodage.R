@@ -21,7 +21,7 @@ recoder_individu <- function(table, table_recodage, .champ_id = "identifiant") {
   }
 
   if (any(purrr::map(table, class) == "Date")) {
-    champs_date <- names(table)[which(purrr::map_lgl(table, is.Date))]
+    champs_date <- names(table)[which(purrr::map_lgl(table, lubridate::is.Date))]
     table <- dplyr::mutate_at(table, .cols = champs_date, as.character)
   }
 
@@ -38,7 +38,7 @@ recoder_individu <- function(table, table_recodage, .champ_id = "identifiant") {
   }
 
   if (exists("champs_date")) {
-    recoder <- dplyr::mutate_at(recoder, .cols = champs_date, ymd)
+    recoder <- dplyr::mutate_at(recoder, .cols = champs_date, lubridate::ymd)
   }
   recoder <- source.maj::transcoder_champs(recoder, dplyr::tibble(champ = names(table),
                                                                   classe = purrr::map_chr(table, class)))
