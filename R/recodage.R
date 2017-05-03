@@ -21,7 +21,7 @@ recoder_individu <- function(table, table_recodage, .champ_id = "identifiant") {
   }
 
   if (any(purrr::map(table, class) == "Date")) {
-    champs_date <- names(table)[which(purrr::map_lgl(table, is.Date))]
+    champs_date <- names(table)[which(purrr::map_lgl(table, lubridate::is.Date))]
     table <- dplyr::mutate_at(table, .cols = champs_date, as.character)
   }
 
