@@ -60,14 +60,20 @@ recoder_individu <- function(table, table_recodage, .champ_id = "identifiant") {
 #' @return La table recodée
 #'
 #' @export
-recoder_champs <- function(table, table_recodage, .champ_id = "identifiant") {
+recoder_champs <- function(table, table_recodage, .champ_id = "identifiant", filtre = NULL) {
 
   # table <- maj_perimetre_mesr
   # table_recodage <- importer_table_access("pepip_recodage")
   # .champ_id = "id"
 
+  if (!is.null(filtre)) {
+    table_recodage <- dplyr::filter_(table_recodage, .dots = paste0("filtre == \"", filtre, "\""))
+  }
+
   table_recodage <- dplyr::filter(table_recodage, champ %in% names(table)) %>%
     dplyr::mutate(.id = row_number())
+
+  if (nrow(table_recodage) == 0) return(table)
 
   recodage_individu <- purrr::map_df(table_recodage$expression,
                                       ~ dplyr::filter_(table, .dots = .) %>%
