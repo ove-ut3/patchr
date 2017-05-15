@@ -88,7 +88,7 @@ renommer_champs <- function(table, table_rename, drop = TRUE) {
   if (is.null(table_rename)) {
     return(table)
   }
-  
+
   if (any(class(table) == "data.frame") == FALSE) {
 
     return(table)
@@ -245,6 +245,11 @@ to_integer <- function(vecteur) {
 
     return(to_integer)
   }
+  if (any(class(vecteur) == "numeric") == TRUE) {
+    to_integer <- as.integer(vecteur)
+
+    return(to_integer)
+  }
 
 }
 
@@ -285,6 +290,14 @@ to_date <- function(vecteur, origin = "1899-12-30") {
     num_format <- stringr::str_detect(vecteur, "^\\d{1,2}-\\d{1,2}-\\d{2}$") %>% which()
     #to_date[num_format] <- dmy(vecteur[num_format])
     to_date[num_format] <- as.Date(vecteur[num_format], "%d-%m-%y")
+
+    num_format <- stringr::str_detect(vecteur, "^\\d{4}-\\d{1,2}-\\d{1,2}$") %>% which()
+    #to_date[num_format] <- dmy(vecteur[num_format])
+    to_date[num_format] <- as.Date(vecteur[num_format])
+
+    num_format <- stringr::str_detect(vecteur, "^\\d{4}/\\d{1,2}/\\d{1,2}$") %>% which()
+    #to_date[num_format] <- dmy(vecteur[num_format])
+    to_date[num_format] <- as.Date(vecteur[num_format])
 
     return(to_date)
   }
