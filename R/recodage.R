@@ -66,7 +66,7 @@ recoder_champs <- function(table, table_recodage, .champ_id = "identifiant", fil
   # .champ_id = "id"
 
   if (!is.null(filtre)) {
-    table_recodage <- dplyr::filter_(table_recodage, .dots = paste0("filtre == \"", filtre, "\""))
+    table_recodage <- dplyr::filter_(table_recodage, .dots = paste0("filtre == \"", filtre, "\" | is.na(filtre)"))
   }
 
   table_recodage <- dplyr::filter(table_recodage, champ %in% names(table)) %>%
