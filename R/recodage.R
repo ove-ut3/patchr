@@ -29,7 +29,7 @@ recoder_individu <- function(table, table_recodage, .champ_id = "identifiant") {
   }
 
   recoder <- tidyr::gather(table, "champ", "valeur", -.champ_id) %>%
-    dplyr::left_join(table_recodage, by = c(".champ_id" = "identifiant", "champ")) %>%
+    dplyr::left_join(table_recodage, by = c(".champ_id" = .champ_id, "champ")) %>%
     dplyr::mutate(valeur = ifelse(!is.na(.valeur), .valeur, valeur),
                   valeur = na_if(valeur, "[null]")) %>%
     dplyr::select(.champ_id, champ, valeur) %>%
@@ -59,35 +59,37 @@ recoder_individu <- function(table, table_recodage, .champ_id = "identifiant") {
 #' @return La table recodée
 #'
 #' @export
-recoder_champs <- function(table, table_recodage, .champ_id = "identifiant", filtre = NULL) {
+recoder_champs <- function(table, table_recodage, filtre = NULL) {
 
-  # table <- maj_perimetre_mesr
-  # table_recodage <- importer_table_access("pepip_recodage")
-  # .champ_id = "id"
+  # table <- data
+  # table_recodage <- importer_table_access("ioslides_recodage", paste0(disque, "Insertion Pro/Tables_ref.accdb"))
 
   if (!is.null(filtre)) {
     table_recodage <- dplyr::filter_(table_recodage, .dots = paste0("filtre == \"", filtre, "\" | is.na(filtre)"))
   }
 
   table_recodage <- dplyr::filter(table_recodage, champ %in% names(table)) %>%
+    dplyr::rename(.champ = champ) %>% 
     dplyr::mutate(.id = row_number())
 
   if (nrow(table_recodage) == 0) return(table)
 
+  table <- dplyr::mutate(table, .id_recodage = row_number())
+
   recodage_individu <- purrr::map_df(table_recodage$expression,
-                                      ~ dplyr::filter_(table, .dots = .) %>%
-                                       dplyr::select_(.dots = c("identifiant" = .champ_id)),
+                                      ~ dplyr::filter_(table, .dots = .),
                                      .id = ".id") %>%
     dplyr::mutate(.id = as.integer(.id)) %>%
     dplyr::left_join(table_recodage, by = ".id") %>%
-    dplyr::select(identifiant, champ, valeur) %>%
+    dplyr::select(.id_recodage, champ = .champ, valeur) %>%
     unique() %>% # Un individu qui remplit plusieurs recodages
     # Question choix multiple (concaténation)
-    dplyr::group_by(identifiant, champ) %>%
+    dplyr::group_by(.id_recodage, champ) %>%
     dplyr::summarise(valeur = paste(valeur, collapse = ";")) %>%
     dplyr::ungroup()
 
-  recoder <- recoder_individu(table, recodage_individu, .champ_id = .champ_id)
+  recoder <- recoder_individu(table, recodage_individu, .champ_id = ".id_recodage") %>%
+    select(-.id_recodage)
 
   return(recoder)
 }
