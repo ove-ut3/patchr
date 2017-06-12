@@ -25,7 +25,7 @@ recoder_individu <- function(table, table_recodage, .champ_id = "identifiant") {
 
   if (any(purrr::map(table, class) == "Date")) {
     table <- table %>%
-      dplyr::mutate_at(.cols = names(.)[which(purrr::map_lgl(., lubridate::is.Date))], as.character)
+      dplyr::mutate_at(.vars = names(.)[which(purrr::map_lgl(., lubridate::is.Date))], as.character)
   }
 
   recoder <- tidyr::gather(table, "champ", "valeur", -.champ_id) %>%
@@ -69,7 +69,7 @@ recoder_champs <- function(table, table_recodage, filtre = NULL) {
   }
 
   table_recodage <- dplyr::filter(table_recodage, champ %in% names(table)) %>%
-    dplyr::rename(.champ = champ) %>% 
+    dplyr::rename(.champ = champ) %>%
     dplyr::mutate(.id = row_number())
 
   if (nrow(table_recodage) == 0) return(table)
