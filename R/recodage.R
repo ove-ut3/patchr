@@ -64,6 +64,8 @@ recoder_champs <- function(table, table_recodage, filtre = NULL) {
   # table <- data
   # table_recodage <- importer_table_access("ioslides_recodage", paste0(disque, "Insertion Pro/Tables_ref.accdb"))
 
+  if (nrow(table) == 0) return(table)
+
   if (!is.null(filtre)) {
     table_recodage <- dplyr::filter_(table_recodage, .dots = paste0("filtre == \"", filtre, "\" | is.na(filtre)"))
   }
