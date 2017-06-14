@@ -12,7 +12,7 @@
 recoder_individu <- function(table, table_recodage, .champ_id = "identifiant") {
 
   # table_recodage <- recodage_individu
-  table <- dplyr::rename_(table, .dots = c(".champ_id" = .champ_id))
+  table <- dplyr::rename(table, .champ_id = !!.champ_id)
   table_recodage <- dplyr::rename(table_recodage, .valeur = valeur)
 
   if (any(purrr::map(table, class) == "list")) {
@@ -67,7 +67,7 @@ recoder_champs <- function(table, table_recodage, filtre = NULL) {
   if (nrow(table) == 0) return(table)
 
   if (!is.null(filtre)) {
-    table_recodage <- dplyr::filter_(table_recodage, .dots = paste0("filtre == \"", filtre, "\" | is.na(filtre)"))
+    table_recodage <- dplyr::filter(table_recodage, filtre == !!filtre | is.na(filtre))
   }
 
   table_recodage <- dplyr::filter(table_recodage, champ %in% names(table)) %>%
@@ -80,6 +80,7 @@ recoder_champs <- function(table, table_recodage, filtre = NULL) {
 
   recodage_individu <- purrr::map_df(table_recodage$expression,
                                       ~ dplyr::filter_(table, .dots = .),
+                                      # ~ dplyr::filter(table, quo(.)),
                                      .id = ".id") %>%
     dplyr::mutate(.id = as.integer(.id)) %>%
     dplyr::left_join(table_recodage, by = ".id") %>%
