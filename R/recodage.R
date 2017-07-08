@@ -11,6 +11,10 @@
 #' @export
 recoder_individu <- function(table, table_recodage, .champ_id = "identifiant") {
 
+  if (intersect(table[[.champ_id]], table_recodage[[.champ_id]]) %>% length == 0) {
+    return(table)
+  }
+
   # table_recodage <- recodage_individu
   table <- dplyr::rename(table, .champ_id = !!.champ_id)
   table_recodage <- dplyr::rename(table_recodage, .valeur = valeur)
