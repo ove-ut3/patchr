@@ -74,29 +74,15 @@ recoder_champs <- function(table, table_recodage, filtre = NULL) {
     table_recodage <- dplyr::filter(table_recodage, filtre == !!filtre | is.na(filtre))
   }
 
-  table_recodage <- dplyr::filter(table_recodage, champ %in% names(table)) %>%
-    dplyr::rename(.champ = champ) %>%
-    dplyr::mutate(.id = row_number())
+  table_recodage <- dplyr::filter(table_recodage, champ %in% names(table))
 
   if (nrow(table_recodage) == 0) return(table)
 
-  table <- dplyr::mutate(table, .id_recodage = row_number())
+  list_mutate <- paste0("dplyr::if_else(", table_recodage$expression, ", ", table_recodage$valeur,", ", table_recodage$champ, ", ", table_recodage$champ, ")") %>%
+    as.list()
+  names(list_mutate) <- table_recodage$champ
 
-  recodage_individu <- purrr::map_df(table_recodage$expression,
-                                      ~ dplyr::filter_(table, .dots = .),
-                                      # ~ dplyr::filter(table, quo(.)),
-                                     .id = ".id") %>%
-    dplyr::mutate(.id = as.integer(.id)) %>%
-    dplyr::left_join(table_recodage, by = ".id") %>%
-    dplyr::select(.id_recodage, champ = .champ, valeur) %>%
-    unique() %>% # Un individu qui remplit plusieurs recodages
-    # Question choix multiple (concaténation)
-    dplyr::group_by(.id_recodage, champ) %>%
-    dplyr::summarise(valeur = paste(valeur, collapse = ";")) %>%
-    dplyr::ungroup()
+  table <- dplyr::mutate_(table, .dots = list_mutate)
 
-  recoder <- recoder_individu(table, recodage_individu, .champ_id = ".id_recodage") %>%
-    select(-.id_recodage)
-
-  return(recoder)
+  return(table)
 }
