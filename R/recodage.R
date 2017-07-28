@@ -11,13 +11,16 @@
 #' @export
 recoder_individu <- function(table, table_recodage, .champ_id = "identifiant") {
 
+  table_recodage <- dplyr::filter(table_recodage, champ %in% names(table)) %>%
+    dplyr::rename(.valeur = valeur)
+
   if (intersect(table[[.champ_id]], table_recodage[[.champ_id]]) %>% length == 0) {
     return(table)
   }
 
-  # table_recodage <- recodage_individu
   table <- dplyr::rename(table, .champ_id = !!.champ_id)
-  table_recodage <- dplyr::rename(table_recodage, .valeur = valeur)
+  table_id_na <- dplyr::filter(table, is.na(.champ_id))
+  table <- dplyr::filter(table, !is.na(.champ_id))
 
   if (any(purrr::map(table, class) == "list")) {
     champs_list <- dplyr::select(table, .champ_id, which(purrr::map_lgl(table, is.list)))
@@ -47,6 +50,9 @@ recoder_individu <- function(table, table_recodage, .champ_id = "identifiant") {
   recoder <- transcoder_champs(recoder, content_maj)
 
   recoder <- dplyr::select(recoder, purrr::map_int(names(table), ~ which(. == names(recoder))))
+
+  recoder <- dplyr::bind_rows(recoder, table_id_na)
+
   names(recoder)[which(names(recoder) == ".champ_id")] <- .champ_id
 
   return(recoder)
