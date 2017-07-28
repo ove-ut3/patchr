@@ -84,11 +84,16 @@ recoder_champs <- function(table, table_recodage, filtre = NULL) {
 
   if (nrow(table_recodage) == 0) return(table)
 
-  list_mutate <- paste0("dplyr::if_else(", table_recodage$expression, ", ", table_recodage$valeur,", ", table_recodage$champ, ", ", table_recodage$champ, ")") %>%
+  list_instructions <- paste0("dplyr::if_else(", table_recodage$expression, ", ", table_recodage$valeur,", ", table_recodage$champ, ", ", table_recodage$champ, ")") %>%
     as.list()
-  names(list_mutate) <- table_recodage$champ
 
-  table <- dplyr::mutate_(table, .dots = list_mutate)
+  list_champs <- table_recodage$champ %>%
+    as.list()
+
+  list_mutate <- stats::setNames(list_instructions, list_champs) %>%
+    purrr::map(rlang::parse_quosure)
+
+  table <- dplyr::mutate(table, !!!list_mutate)
 
   return(table)
 }
