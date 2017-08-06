@@ -38,7 +38,7 @@ recoder_individu <- function(table, table_recodage, .champ_id = "identifiant") {
   recoder <- tidyr::gather(table, "champ", "valeur", -.champ_id) %>%
     dplyr::left_join(table_recodage, by = c(".champ_id" = .champ_id, "champ")) %>%
     dplyr::mutate(valeur = ifelse(!is.na(.valeur), .valeur, valeur),
-                  valeur = na_if(valeur, "[null]")) %>%
+                  valeur = dplyr::na_if(valeur, "[null]")) %>%
     dplyr::select(.champ_id, champ, valeur) %>%
     unique() %>% #En cas de question à choix multiple
     tidyr::spread(champ, valeur)
@@ -64,28 +64,44 @@ recoder_individu <- function(table, table_recodage, .champ_id = "identifiant") {
 #'
 #' @param table La table à recoder.
 #' @param table_recodage La table de recodage.
-#' @param .champ_id Le nom du champ "identifiant".
+#' @param filtre La valeur de filtre.
+#' @param champs_table Recodage réalisé uniquement sur le schamps déjà déjà présents dans la table.
 #'
 #' @return La table recodée
 #'
 #' @export
-recoder_champs <- function(table, table_recodage, filtre = NULL) {
-
-  # table <- data
-  # table_recodage <- importer_table_access("ioslides_recodage", paste0(disque, "Insertion Pro/Tables_ref.accdb"))
+recoder_champs <- function(table, table_recodage, filtre = NULL, champs_table = TRUE) {
 
   if (nrow(table) == 0) return(table)
 
   if (!is.null(filtre)) {
-    table_recodage <- dplyr::filter(table_recodage, filtre == !!filtre | is.na(filtre))
+    table_recodage <- tidyr::separate_rows(table_recodage, filtre, sep = ";") %>%
+      dplyr::filter(filtre == !!filtre)
   }
 
-  table_recodage <- dplyr::filter(table_recodage, champ %in% names(table))
+  if (champs_table == TRUE) {
+    table_recodage <- dplyr::filter(table_recodage, champ %in% names(table))
+  }
 
   if (nrow(table_recodage) == 0) return(table)
 
-  list_instructions <- paste0("dplyr::if_else(", table_recodage$expression, ", ", table_recodage$valeur,", ", table_recodage$champ, ", ", table_recodage$champ, ")") %>%
+  if (champs_table == FALSE) {
+    champs_na <- table_recodage$champ[which(!table_recodage$champ %in% names(table))] %>%
+      unique()
+    if (length(champs_na) >= 1) {
+
+      list_mutate <- stats::setNames(as.list(rep("NA_character_", length(champs_na))), as.list(champs_na)) %>%
+        purrr::map(rlang::parse_quosure)
+
+      table <- dplyr::mutate(table, !!!list_mutate)
+    }
+  }
+
+  list_instructions <- ifelse(is.na(table_recodage$expression),
+                              table_recodage$valeur,
+                              paste0("dplyr::if_else(", table_recodage$expression, ", ", table_recodage$valeur,", ", table_recodage$champ, ", ", table_recodage$champ, ")")) %>%
     as.list()
+
 
   list_champs <- table_recodage$champ %>%
     as.list()

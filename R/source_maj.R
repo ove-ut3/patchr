@@ -150,7 +150,7 @@ transcoder_champs <- function(table, content_maj) {
     ) %>%
       dplyr::mutate(num_champ = row_number()) %>%
       dplyr::inner_join(content_maj %>%
-                          rename(classe_maj = classe),
+                          dplyr::rename(classe_maj = classe),
                         by = "champ") %>%
       dplyr::filter(classe != classe_maj)
 

@@ -4,14 +4,16 @@
 \alias{recoder_champs}
 \title{Recoder les champs d'une table a partir d'une expression VRAI/FAUX}
 \usage{
-recoder_champs(table, table_recodage, filtre = NULL)
+recoder_champs(table, table_recodage, filtre = NULL, champs_table = TRUE)
 }
 \arguments{
 \item{table}{La table à recoder.}
 
 \item{table_recodage}{La table de recodage.}
 
-\item{.champ_id}{Le nom du champ "identifiant".}
+\item{filtre}{La valeur de filtre.}
+
+\item{champs_table}{Recodage réalisé uniquement sur le schamps déjà déjà présents dans la table.}
 }
 \value{
 La table recodée
