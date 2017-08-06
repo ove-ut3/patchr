@@ -22,7 +22,7 @@ recoder_individu <- function(table, table_recodage, .champ_id = "identifiant") {
   table_id_na <- dplyr::filter(table, is.na(.champ_id))
   table <- dplyr::filter(table, !is.na(.champ_id))
 
-  if (any(purrr::map(table, class) == "list")) {
+  if (any(lapply(table, class) == "list")) {
     champs_list <- dplyr::select(table, .champ_id, which(purrr::map_lgl(table, is.list)))
     table <- dplyr::select(table, -which(purrr::map_lgl(table, is.list)))
   }
@@ -30,7 +30,7 @@ recoder_individu <- function(table, table_recodage, .champ_id = "identifiant") {
   content_maj <- dplyr::tibble(champ = names(table),
                                classe = purrr::map_chr(table, class) %>% tolower())
 
-  if (any(purrr::map(table, class) == "Date")) {
+  if (any(lapply(table, class) == "Date")) {
     table <- table %>%
       dplyr::mutate_at(.vars = names(.)[which(purrr::map_lgl(., lubridate::is.Date))], as.character)
   }
@@ -91,7 +91,7 @@ recoder_champs <- function(table, table_recodage, filtre = NULL, champs_table = 
     if (length(champs_na) >= 1) {
 
       list_mutate <- stats::setNames(as.list(rep("NA_character_", length(champs_na))), as.list(champs_na)) %>%
-        purrr::map(rlang::parse_quosure)
+        lapply(rlang::parse_quosure)
 
       table <- dplyr::mutate(table, !!!list_mutate)
     }
@@ -107,7 +107,7 @@ recoder_champs <- function(table, table_recodage, filtre = NULL, champs_table = 
     as.list()
 
   list_mutate <- stats::setNames(list_instructions, list_champs) %>%
-    purrr::map(rlang::parse_quosure)
+    lapply(rlang::parse_quosure)
 
   table <- dplyr::mutate(table, !!!list_mutate)
 

@@ -61,7 +61,7 @@ maj_source <- function(import, champs_filtre = NULL, ligne_fin = NULL) {
 #' @export
 liste_champs_unique <- function(import, table_rename, fichier_csv = "champs_unique.csv"){
 
-  purrr::map(import$import, colnames) %>%
+  lapply(import$import, colnames) %>%
     purrr::map_df(~ data.frame(champ = .)) %>%
     dplyr::as_data_frame() %>%
     dplyr::anti_join(table_rename, by = "champ") %>%
@@ -144,7 +144,7 @@ transcoder_champs <- function(table, content_maj) {
   } else {
 
     table_transcodage <- dplyr::data_frame(champ = colnames(table),
-                                            classe = purrr::map(table, class) %>%
+                                            classe = lapply(table, class) %>%
                                               purrr::map_chr(1) %>%
                                               tolower()
     ) %>%
