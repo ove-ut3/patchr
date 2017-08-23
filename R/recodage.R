@@ -90,7 +90,17 @@ recoder_champs <- function(table, table_recodage, filtre = NULL, champs_table = 
       unique()
     if (length(champs_na) >= 1) {
 
-      list_mutate <- stats::setNames(as.list(rep("NA_character_", length(champs_na))), as.list(champs_na)) %>%
+      classe_champs_a_creer <- table_recodage %>%
+        dplyr::filter(champ %in% champs_na) %>%
+        dplyr::mutate(classe = "character",
+                      classe = ifelse(stringr::str_detect(valeur, "^\\d+L$"), "integer", classe),
+                      classe = ifelse(stringr::str_detect(valeur, "^[\\d\\.]+$"), "real", classe)) %>%
+        dplyr::select(champ, classe) %>%
+        unique() %>%
+        dplyr::pull(classe) %>%
+        paste0("NA_", ., "_")
+
+      list_mutate <- stats::setNames(as.list(classe_champs_a_creer), as.list(champs_na)) %>%
         lapply(rlang::parse_quosure)
 
       table <- dplyr::mutate(table, !!!list_mutate)
