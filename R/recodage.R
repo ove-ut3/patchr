@@ -76,7 +76,7 @@ recoder_champs <- function(table, table_recodage, filtre = NULL, champs_table = 
 
   if (!is.null(filtre)) {
     table_recodage <- tidyr::separate_rows(table_recodage, filtre, sep = ";") %>%
-      dplyr::filter(filtre == !!filtre)
+      dplyr::filter(filtre == !!filtre | is.na(filtre))
   }
 
   if (champs_table == TRUE) {
