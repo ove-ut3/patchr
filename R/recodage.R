@@ -107,6 +107,8 @@ recoder_champs <- function(table, table_recodage, filtre = NULL, champs_table = 
     }
   }
 
+  table_recodage <- dplyr::arrange(table_recodage, ordre)
+
   list_instructions <- ifelse(is.na(table_recodage$expression),
                               table_recodage$valeur,
                               paste0("dplyr::if_else(", table_recodage$expression, ", ", table_recodage$valeur,", ", table_recodage$champ, ", ", table_recodage$champ, ")")) %>%
