@@ -37,7 +37,7 @@ maj_source <- function(import, champs_filtre = NULL, ligne_fin = NULL) {
     suppression_lignes_na <- transcode
   }
 
-  parallel::stopCluster(clusters)
+  divr::stopper_cluster(clusters)
 
   maj_source <- dplyr::mutate(import, donnees = suppression_lignes_na) %>%
     dplyr::select(-import) %>%
