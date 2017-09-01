@@ -10,12 +10,13 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     divr,
-    importr,
     dplyr,
+    importr,
+    lubridate,
     pbapply,
-    parallel,
     purrr,
-    tidyr,
+    rlang,
+    stats,
     stringr,
-    lubridate
+    tidyr
 RoxygenNote: 6.0.1
