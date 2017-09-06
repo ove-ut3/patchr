@@ -281,7 +281,9 @@ to_date <- function(vecteur, origin = "1899-12-30") {
 
     num_format <- stringr::str_detect(vecteur, "^\\d{1,2}/\\d{1,2}/\\d{2}$") %>% which()
     #to_date[num_format] <- dmy(vecteur[num_format])
-    to_date[num_format] <- as.Date(vecteur[num_format], "%d/%m/%y")
+    to_date[num_format] <- as.Date(vecteur[num_format], "%d/%m/%y") %>%
+      ifelse(. > lubridate::today(), . - 100 * 365.25, .) %>%
+      lubridate::as_date()
 
     num_format <- stringr::str_detect(vecteur, "^\\d{1,2}-\\d{1,2}-\\d{4}$") %>% which()
     #to_date[num_format] <- dmy(vecteur[num_format])
@@ -289,7 +291,9 @@ to_date <- function(vecteur, origin = "1899-12-30") {
 
     num_format <- stringr::str_detect(vecteur, "^\\d{1,2}-\\d{1,2}-\\d{2}$") %>% which()
     #to_date[num_format] <- dmy(vecteur[num_format])
-    to_date[num_format] <- as.Date(vecteur[num_format], "%d-%m-%y")
+    to_date[num_format] <- as.Date(vecteur[num_format], "%d-%m-%y") %>%
+      ifelse(. > lubridate::today(), . - 100 * 365.25, .) %>%
+      lubridate::as_date()
 
     num_format <- stringr::str_detect(vecteur, "^\\d{4}-\\d{1,2}-\\d{1,2}$") %>% which()
     #to_date[num_format] <- dmy(vecteur[num_format])
