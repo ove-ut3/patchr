@@ -77,50 +77,52 @@ liste_champs_unique <- function(liste_tbl, table_rename, fichier_csv = "champs_u
 #'
 #' @param table Un data frame.
 #' @param table_rename Une table de correspondance entre anciens et nouveaux noms de champ.
+#' @param source Nom de la source à filtrer dans la table \code{table_rename}.
 #' @param drop \code{TRUE}: les champs non-rensignés dans la table de correspondance sont supprimés; \code{FALSE}: tous les champs sont conservés.
 #'
 #' @return Un data frame dont les champs sont renommés.
 #'
 #' @export
-renommer_champs <- function(table, table_rename, drop = TRUE) {
+renommer_champs <- function(table, table_rename, source = NULL, drop = TRUE) {
 
   if (is.null(table_rename)) {
     return(table)
   }
 
   if (any(class(table) == "data.frame") == FALSE) {
-
     return(table)
-
-  } else {
-
-    colnames_maj <- dplyr::data_frame(champ = colnames(table)) %>%
-      dplyr::left_join(dplyr::mutate(table_rename, rename = ifelse(is.na(rename), champ, rename)),
-                       by = "champ")
-
-    if (drop == TRUE) {
-      num_champ_supression <- which(is.na(colnames_maj$rename))
-      if (length(num_champ_supression) != 0) {
-        table <- dplyr::select(table, -which(is.na(colnames_maj$rename)))
-        colnames_maj <- dplyr::filter(colnames_maj, !is.na(rename))
-      }
-    } else if (drop == FALSE){
-      colnames_maj <- dplyr::mutate(colnames_maj, rename = ifelse(is.na(rename), champ, rename))
-    }
-
-    colnames_maj <- colnames_maj[["rename"]]
-
-    if (length(unique(colnames_maj)) != length(colnames_maj)) {
-      doublons <- which(table(colnames_maj) >= 2) %>% names()
-      message("Doublon dans la table_rename sur le champ \"rename\" : ", doublons)
-      colnames_maj <- make.unique(colnames_maj)
-    }
-
-    colnames(table) <- colnames_maj
-
-    if (ncol(table) == 0) return(NULL)
-    else return(table)
   }
+
+  if (!is.null(source)) {
+    table_rename <- dplyr::filter(table_rename, source == !!source)
+  }
+
+  colnames_maj <- dplyr::data_frame(champ = colnames(table)) %>%
+    dplyr::left_join(dplyr::mutate(table_rename, rename = ifelse(is.na(rename), champ, rename)),
+                     by = "champ")
+
+  if (drop == TRUE) {
+    num_champ_supression <- which(is.na(colnames_maj$rename))
+    if (length(num_champ_supression) != 0) {
+      table <- dplyr::select(table, -which(is.na(colnames_maj$rename)))
+      colnames_maj <- dplyr::filter(colnames_maj, !is.na(rename))
+    }
+  } else if (drop == FALSE){
+    colnames_maj <- dplyr::mutate(colnames_maj, rename = ifelse(is.na(rename), champ, rename))
+  }
+
+  colnames_maj <- colnames_maj[["rename"]]
+
+  if (length(unique(colnames_maj)) != length(colnames_maj)) {
+    doublons <- which(table(colnames_maj) >= 2) %>% names()
+    message("Doublon dans la table_rename sur le champ \"rename\" : ", doublons)
+    colnames_maj <- make.unique(colnames_maj)
+  }
+
+  colnames(table) <- colnames_maj
+
+  if (ncol(table) == 0) return(NULL)
+  else return(table)
 
 }
 

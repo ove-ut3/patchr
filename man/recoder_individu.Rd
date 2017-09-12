@@ -4,12 +4,15 @@
 \alias{recoder_individu}
 \title{Recoder les champs d'une table a partir d'un identifiant}
 \usage{
-recoder_individu(table, table_recodage, .champ_id = "identifiant")
+recoder_individu(table, table_recodage, source = NULL,
+  .champ_id = "identifiant")
 }
 \arguments{
 \item{table}{La table à recoder.}
 
 \item{table_recodage}{La table de recodage.}
+
+\item{source}{Nom de la source à filtrer dans la table \code{table_recodage}.}
 
 \item{.champ_id}{Le nom du champ "identifiant".}
 }

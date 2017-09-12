@@ -4,12 +4,17 @@
 #'
 #' @param table La table à recoder.
 #' @param table_recodage La table de recodage.
+#' @param source Nom de la source à filtrer dans la table \code{table_recodage}.
 #' @param .champ_id Le nom du champ "identifiant".
 #'
 #' @return La table recodée
 #'
 #' @export
-recoder_individu <- function(table, table_recodage, .champ_id = "identifiant") {
+recoder_individu <- function(table, table_recodage, source = NULL, .champ_id = "identifiant") {
+
+  if (!is.null(source)) {
+    table_recodage <- dplyr::filter(table_recodage, source == !!source)
+  }
 
   table_recodage <- dplyr::filter(table_recodage, champ %in% names(table)) %>%
     dplyr::rename(.valeur = valeur)
@@ -64,15 +69,20 @@ recoder_individu <- function(table, table_recodage, .champ_id = "identifiant") {
 #'
 #' @param table La table à recoder.
 #' @param table_recodage La table de recodage.
+#' @param source Nom de la source à filtrer dans la table \code{table_recodage}.
 #' @param filtre La valeur de filtre.
 #' @param champs_table Recodage réalisé uniquement sur le schamps déjà déjà présents dans la table.
 #'
 #' @return La table recodée
 #'
 #' @export
-recoder_champs <- function(table, table_recodage, filtre = NULL, champs_table = TRUE) {
+recoder_champs <- function(table, table_recodage, source = NULL, filtre = NULL, champs_table = TRUE) {
 
   if (nrow(table) == 0) return(table)
+
+  if (!is.null(source)) {
+    table_recodage <- dplyr::filter(table_recodage, source == !!source)
+  }
 
   if (!is.null(filtre)) {
     table_recodage <- tidyr::separate_rows(table_recodage, filtre, sep = ";") %>%
