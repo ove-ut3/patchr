@@ -52,18 +52,17 @@ maj_source <- function(import, champs_filtre = NULL, ligne_fin = NULL) {
 #'
 #' Retourne la liste complète et dédoublonnée des champs de data frame
 #'
-#' @param import Une liste de data frame.
+#' @param liste_tbl Une liste de data frame.
 #' @param table_rename Une table de correspondance entre anciens et nouveaux noms de champ.
 #' @param fichier_csv Un chemin de fichier csv en sortie.
 #'
 #' @return Un vecteur de noms de champ.
 #'
 #' @export
-liste_champs_unique <- function(import, table_rename, fichier_csv = "champs_unique.csv"){
+liste_champs_unique <- function(liste_tbl, table_rename, fichier_csv = "champs_unique.csv") {
 
-  lapply(import$import, colnames) %>%
-    purrr::map_df(~ data.frame(champ = .)) %>%
-    dplyr::as_data_frame() %>%
+  lapply(liste_tbl, colnames) %>%
+    purrr::map_df( ~ tibble::tibble(champ = .)) %>%
     dplyr::anti_join(table_rename, by = "champ") %>%
     dplyr::group_by(champ) %>%
     dplyr::summarise(freq = n()) %>%

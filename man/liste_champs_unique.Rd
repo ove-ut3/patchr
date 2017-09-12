@@ -4,10 +4,11 @@
 \alias{liste_champs_unique}
 \title{Retourne la liste complete et dedoublonnee des champs de data frame}
 \usage{
-liste_champs_unique(import, table_rename, fichier_csv = "champs_unique.csv")
+liste_champs_unique(liste_tbl, table_rename,
+  fichier_csv = "champs_unique.csv")
 }
 \arguments{
-\item{import}{Une liste de data frame.}
+\item{liste_tbl}{Une liste de data frame.}
 
 \item{table_rename}{Une table de correspondance entre anciens et nouveaux noms de champ.}
 
