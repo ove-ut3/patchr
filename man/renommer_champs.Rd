@@ -4,7 +4,8 @@
 \alias{renommer_champs}
 \title{Renomme les champs d'un data frame selon une table de correspondance}
 \usage{
-renommer_champs(table, table_rename, source = NULL, drop = TRUE)
+renommer_champs(table, table_rename, source = NULL, filtre = NULL,
+  drop = TRUE)
 }
 \arguments{
 \item{table}{Un data frame.}
@@ -12,6 +13,8 @@ renommer_champs(table, table_rename, source = NULL, drop = TRUE)
 \item{table_rename}{Une table de correspondance entre anciens et nouveaux noms de champ.}
 
 \item{source}{Nom de la source à filtrer dans la table \code{table_rename}.}
+
+\item{filtre}{La valeur de filtre.}
 
 \item{drop}{\code{TRUE}: les champs non-rensignés dans la table de correspondance sont supprimés; \code{FALSE}: tous les champs sont conservés.}
 }
