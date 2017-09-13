@@ -13,7 +13,7 @@
 recoder_individu <- function(table, table_recodage, source = NULL, .champ_id = "identifiant") {
 
   if (!is.null(source)) {
-    table_recodage <- dplyr::filter(table_recodage, source == !!source)
+    table_recodage <- dplyr::filter(table_recodage, source %in% !!source)
   }
 
   table_recodage <- dplyr::filter(table_recodage, champ %in% names(table)) %>%
@@ -81,7 +81,7 @@ recoder_champs <- function(table, table_recodage, source = NULL, filtre = NULL, 
   if (nrow(table) == 0) return(table)
 
   if (!is.null(source)) {
-    table_recodage <- dplyr::filter(table_recodage, source == !!source)
+    table_recodage <- dplyr::filter(table_recodage, source %in% !!source)
   }
 
   if (!is.null(filtre)) {

@@ -94,7 +94,7 @@ renommer_champs <- function(table, table_rename, source = NULL, drop = TRUE) {
   }
 
   if (!is.null(source)) {
-    table_rename <- dplyr::filter(table_rename, source == !!source)
+    table_rename <- dplyr::filter(table_rename, source %in% !!source)
   }
 
   colnames_maj <- dplyr::data_frame(champ = colnames(table)) %>%
