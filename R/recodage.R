@@ -32,6 +32,11 @@ recoder_individu <- function(table, table_recodage, source = NULL, .champ_id = "
     table <- dplyr::select(table, -which(purrr::map_lgl(table, is.list)))
   }
 
+  if (any(purrr::map_lgl(table, ~ any(class(.) == "POSIXct")))) {
+    champs_posix <- dplyr::select(table, .champ_id, which(purrr::map_lgl(table, ~ any(class(.) == "POSIXct"))))
+    table <- dplyr::select(table, -which(purrr::map_lgl(table, ~ any(class(.) == "POSIXct"))))
+  }
+
   content_maj <- dplyr::tibble(champ = names(table),
                                classe = purrr::map_chr(table, class) %>% tolower())
 
@@ -52,11 +57,13 @@ recoder_individu <- function(table, table_recodage, source = NULL, .champ_id = "
     recoder <- dplyr::full_join(recoder, champs_list, by = ".champ_id")
   }
 
-  recoder <- transcoder_champs(recoder, content_maj)
+  if (exists("champs_posix")) {
+    recoder <- dplyr::full_join(recoder, champs_posix, by = ".champ_id")
+  }
 
-  recoder <- dplyr::select(recoder, purrr::map_int(names(table), ~ which(. == names(recoder))))
-
-  recoder <- dplyr::bind_rows(recoder, table_id_na)
+  recoder <- transcoder_champs(recoder, content_maj) %>%
+    dplyr::select(purrr::map_int(names(table), ~ which(. == names(recoder)))) %>%
+    dplyr::bind_rows(table_id_na)
 
   names(recoder)[which(names(recoder) == ".champ_id")] <- .champ_id
 
