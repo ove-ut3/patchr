@@ -27,6 +27,8 @@ recoder_individu <- function(table, table_recodage, source = NULL, .champ_id = "
   table_id_na <- dplyr::filter(table, is.na(.champ_id))
   table <- dplyr::filter(table, !is.na(.champ_id))
 
+  ordre_champs <- names(table)
+
   if (any(lapply(table, class) == "list")) {
     champs_list <- dplyr::select(table, .champ_id, which(purrr::map_lgl(table, is.list)))
     table <- dplyr::select(table, -which(purrr::map_lgl(table, is.list)))
@@ -53,6 +55,8 @@ recoder_individu <- function(table, table_recodage, source = NULL, .champ_id = "
     unique() %>% #En cas de question à choix multiple
     tidyr::spread(champ, valeur)
 
+  recoder <- source.maj::transcoder_champs(recoder, content_maj)
+
   if (exists("champs_list")) {
     recoder <- dplyr::full_join(recoder, champs_list, by = ".champ_id")
   }
@@ -61,8 +65,8 @@ recoder_individu <- function(table, table_recodage, source = NULL, .champ_id = "
     recoder <- dplyr::full_join(recoder, champs_posix, by = ".champ_id")
   }
 
-  recoder <- transcoder_champs(recoder, content_maj) %>%
-    dplyr::select(purrr::map_int(names(table), ~ which(. == names(recoder)))) %>%
+  recoder <- recoder %>%
+    dplyr::select(purrr::map_int(ordre_champs, ~ which(. == names(recoder)))) %>%
     dplyr::bind_rows(table_id_na)
 
   names(recoder)[which(names(recoder) == ".champ_id")] <- .champ_id
