@@ -198,8 +198,8 @@ to_numeric <- function(vecteur) {
   }
 
   if (any(class(vecteur) %in% c("character", "factor")) == TRUE) {
-    to_numeric <- stringr::str_match(vecteur, "^(\\d+)") %>%
-      .[, 2] %>%
+    to_numeric <- stringr::str_match(vecteur, "[\\d\\.,]+") %>%
+      stringr::str_replace_all(",", ".") %>%
       as.numeric()
 
     return(to_numeric)
