@@ -1,23 +1,23 @@
-#' Recoder les champs d'une table a partir d'un identifiant
+#' Recoder les champs d'une table a partir d'un identifiant d'individu
 #'
-#' Recoder les champs d'une table à partir d'un identifiant.
+#' Recoder les champs d'une table à partir d'un identifiant d'individu.
 #'
 #' @param table La table à recoder.
 #' @param table_recodage La table de recodage.
 #' @param source Nom de la source à filtrer dans la table \code{table_recodage}.
-#' @param .champ_id Le nom du champ "identifiant".
+#' @param .champ_id Le nom du champ contenant l'identifiant de l'individu.
 #'
 #' @return La table recodée
 #'
 #' @export
-recoder_individu <- function(table, table_recodage, source = NULL, .champ_id = "identifiant") {
+recoder_individu <- function(table, table_recodage, source = NULL, .champ_id = "code_etudiant") {
 
   if (!is.null(source)) {
     table_recodage <- dplyr::filter(table_recodage, source %in% !!source)
   }
 
   table_recodage <- dplyr::filter(table_recodage, champ %in% names(table)) %>%
-    dplyr::rename(.valeur = valeur)
+    dplyr::select(!!.champ_id, champ, .valeur = valeur)
 
   if (intersect(table[[.champ_id]], table_recodage[[.champ_id]]) %>% length == 0) {
     return(table)

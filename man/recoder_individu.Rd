@@ -2,10 +2,10 @@
 % Please edit documentation in R/recodage.R
 \name{recoder_individu}
 \alias{recoder_individu}
-\title{Recoder les champs d'une table a partir d'un identifiant}
+\title{Recoder les champs d'une table a partir d'un identifiant d'individu}
 \usage{
 recoder_individu(table, table_recodage, source = NULL,
-  .champ_id = "identifiant")
+  .champ_id = "code_etudiant")
 }
 \arguments{
 \item{table}{La table à recoder.}
@@ -14,11 +14,11 @@ recoder_individu(table, table_recodage, source = NULL,
 
 \item{source}{Nom de la source à filtrer dans la table \code{table_recodage}.}
 
-\item{.champ_id}{Le nom du champ "identifiant".}
+\item{.champ_id}{Le nom du champ contenant l'identifiant de l'individu.}
 }
 \value{
 La table recodée
 }
 \description{
-Recoder les champs d'une table à partir d'un identifiant.
+Recoder les champs d'une table à partir d'un identifiant d'individu.
 }
