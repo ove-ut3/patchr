@@ -70,11 +70,11 @@ recoder_individu <- function(table, table_recodage, source = NULL, .champ_id = "
   recoder <- source.maj::transcoder_champs(recoder, content_maj)
 
   if (exists("champs_list")) {
-    recoder <- dplyr::full_join(recoder, champs_list, by = !!.champ_id)
+    recoder <- dplyr::full_join(recoder, champs_list, by = .champ_id)
   }
 
   if (exists("champs_posix")) {
-    recoder <- dplyr::full_join(recoder, champs_posix, by = !!.champ_id)
+    recoder <- dplyr::full_join(recoder, champs_posix, by = .champ_id)
   }
 
   recoder <- recoder %>%
