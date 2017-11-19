@@ -156,3 +156,64 @@ recoder_champs <- function(table, table_recodage, source = NULL, filtre = NULL, 
 
   return(table)
 }
+
+#' recoder_factor
+#'
+#' @param table La table à recoder.
+#' @param table_recodage La table de recodage.
+#' @param source Nom de la source à filtrer dans la table \code{table_recodage}.
+#' @param filtre La valeur de filtre.
+#'
+#' @return La table recodée
+#'
+#' @export
+recoder_factor <- function(table, table_recodage, source = NULL, filtre = NULL) {
+
+  # table <- reponses$import[[1]]
+  # table_recodage <- importr::importer_table_access("_recodage_factor")
+  # source = NULL
+  # filtre = NULL
+
+  if (nrow(table) == 0) return(table)
+
+  if (!is.null(source)) {
+    table_recodage <- dplyr::filter(table_recodage, source %in% !!source)
+  }
+
+  if (!is.null(filtre)) {
+    table_recodage <- tidyr::separate_rows(table_recodage, filtre, sep = ";") %>%
+      dplyr::filter(filtre == !!filtre | is.na(filtre))
+  }
+
+  if (nrow(table_recodage) == 0) return(table)
+
+  if (intersect(names(table), table_recodage$champ) %>% length() == 0) {
+    return(table)
+  }
+
+  champs <- names(table) %>%
+    intersect(table_recodage$champ)
+
+  ordre_champs <- names(table)
+
+  recoder <- table %>%
+    dplyr::mutate(.id = row_number()) %>%
+    dplyr::select(.id, champs) %>%
+    dplyr::mutate_at(dplyr::vars(champs), as.character) %>%
+    tidyr::gather("champ", "valeur", -.id) %>%
+    dplyr::left_join(table_recodage %>%
+                       dplyr::select(champ, valeur, recodage),
+                     by = c("champ", "valeur")) %>%
+    dplyr::mutate(valeur = divr::remplacer_na(valeur, recodage)) %>%
+    dplyr::select(-recodage) %>%
+    tidyr::spread(champ, valeur) %>%
+    dplyr::select(-.id) %>%
+    dplyr::mutate_at(dplyr::vars(champs), as.factor) %>%
+    dplyr::bind_cols(table %>%
+                       dplyr::select(-dplyr::matches(paste0("^", champs, "$"))))
+
+  recoder <- recoder %>%
+    dplyr::select(purrr::map_int(ordre_champs, ~ which(. == names(recoder))))
+
+  return(recoder)
+}
