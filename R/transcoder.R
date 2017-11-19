@@ -38,6 +38,7 @@ transcoder_champs <- function(table, content_maj) {
         else if (classe_maj == "date") table[[champ]] <- source.maj::to_date(table[[champ]])
         else if (classe_maj == "numeric") table[[champ]] <- source.maj::to_numeric(table[[champ]])
         else if (classe_maj == "integer") table[[champ]] <- source.maj::to_integer(table[[champ]])
+        else if (classe_maj == "factor") table[[champ]] <- as.factor(table[[champ]])
 
       }
 
