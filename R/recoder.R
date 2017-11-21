@@ -218,15 +218,15 @@ recoder_factor <- function(table, table_recodage, table_niveaux = NULL, source =
     return(table)
   }
 
-  champs <- names(table) %>%
+  champs_factor <- names(table) %>%
     intersect(table_recodage$champ)
 
   ordre_champs <- names(table)
 
   recoder <- table %>%
     dplyr::mutate(.id = row_number()) %>%
-    dplyr::select(.id, champs) %>%
-    dplyr::mutate_at(dplyr::vars(champs), as.character) %>%
+    dplyr::select(.id, champs_factor) %>%
+    dplyr::mutate_at(dplyr::vars(champs_factor), as.character) %>%
     tidyr::gather("champ", "valeur", -.id) %>%
     dplyr::left_join(table_recodage %>%
                        dplyr::select(champ, valeur, recodage),
@@ -235,9 +235,9 @@ recoder_factor <- function(table, table_recodage, table_niveaux = NULL, source =
     dplyr::select(-recodage) %>%
     tidyr::spread(champ, valeur) %>%
     dplyr::select(-.id) %>%
-    dplyr::mutate_at(dplyr::vars(champs), as.factor) %>%
+    dplyr::mutate_at(dplyr::vars(champs_factor), source.maj::as_factor, table_niveaux) %>%
     dplyr::bind_cols(table %>%
-                       dplyr::select(which(!names(.) %in% champs)))
+                       dplyr::select(which(!names(.) %in% champs_factor)))
 
   recoder <- recoder %>%
     dplyr::select(purrr::map_int(ordre_champs, ~ which(. == names(recoder))))

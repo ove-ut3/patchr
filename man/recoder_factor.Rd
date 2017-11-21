@@ -4,12 +4,15 @@
 \alias{recoder_factor}
 \title{recoder_factor}
 \usage{
-recoder_factor(table, table_recodage, source = NULL, filtre = NULL)
+recoder_factor(table, table_recodage, table_niveaux = NULL, source = NULL,
+  filtre = NULL)
 }
 \arguments{
 \item{table}{La table à recoder.}
 
 \item{table_recodage}{La table de recodage.}
+
+\item{table_niveaux}{La table des niveaux.}
 
 \item{source}{Nom de la source à filtrer dans la table \code{table_recodage}.}
 
