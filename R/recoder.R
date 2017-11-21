@@ -157,22 +157,49 @@ recoder_champs <- function(table, table_recodage, source = NULL, filtre = NULL, 
   return(table)
 }
 
+#' as_factor
+#'
+#' @param champ_factor \dots
+#' @param table_niveaux \dots
+#'
+#' @export
+#' @keywords internal
+as_factor <- function(champ_factor, table_niveaux = NULL) {
+
+  if (is.null(table_niveaux)) {
+    champ_factor <- as.factor(champ_factor)
+    return(champ_factor)
+  }
+
+  nom_champ_factor <- dplyr::enquo(champ_factor) %>%
+    dplyr::quo_name()
+
+  niveaux <- table_niveaux %>%
+    dplyr::filter(champ == nom_champ_factor) %>%
+    dplyr::arrange(ordre) %>%
+    dplyr::pull(niveau)
+
+  if (length(niveaux) != 0) {
+    champ_factor <- factor(champ_factor, levels = niveaux)
+  } else {
+    champ_factor <- as.factor(champ_factor)
+  }
+
+  return(champ_factor)
+}
+
 #' recoder_factor
 #'
 #' @param table La table à recoder.
 #' @param table_recodage La table de recodage.
+#' @param table_niveaux La table des niveaux.
 #' @param source Nom de la source à filtrer dans la table \code{table_recodage}.
 #' @param filtre La valeur de filtre.
 #'
 #' @return La table recodée
 #'
 #' @export
-recoder_factor <- function(table, table_recodage, source = NULL, filtre = NULL) {
-
-  # table <- reponses$import[[1]]
-  # table_recodage <- importr::importer_table_access("_recodage_factor")
-  # source = NULL
-  # filtre = NULL
+recoder_factor <- function(table, table_recodage, table_niveaux = NULL, source = NULL, filtre = NULL) {
 
   if (nrow(table) == 0) return(table)
 
