@@ -210,7 +210,7 @@ recoder_factor <- function(table, table_recodage, source = NULL, filtre = NULL) 
     dplyr::select(-.id) %>%
     dplyr::mutate_at(dplyr::vars(champs), as.factor) %>%
     dplyr::bind_cols(table %>%
-                       dplyr::select(-dplyr::matches(paste0("^", champs, "$"))))
+                       dplyr::select(which(!names(.) %in% champs)))
 
   recoder <- recoder %>%
     dplyr::select(purrr::map_int(ordre_champs, ~ which(. == names(recoder))))
