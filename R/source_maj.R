@@ -22,7 +22,7 @@ maj_source <- function(import, champs_filtre = NULL, ligne_fin = NULL) {
 
   #Transcoder les champs
   content_maj <- importr::importer_table_access(table = "_Contents") %>%
-    dplyr::filter(!is.na(classe)) %>%
+    tidyr::drop_na(classe) %>%
     dplyr::select(champ, classe_maj = classe)
 
   message("Transcodage des champs (à partir de la table Access \"_Contents\"):")
