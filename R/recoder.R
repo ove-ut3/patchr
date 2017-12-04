@@ -205,15 +205,20 @@ recoder_factor <- function(table, table_recodage, table_niveaux = NULL, source =
 
   if (!is.null(source)) {
     table_recodage <- dplyr::filter(table_recodage, source %in% !!source)
-    table_niveaux <- dplyr::filter(table_niveaux, source %in% !!source)
+
+    if (!is.null(table_niveaux)) {
+      table_niveaux <- dplyr::filter(table_niveaux, source %in% !!source)
+    }
   }
 
   if (!is.null(filtre)) {
     table_recodage <- tidyr::separate_rows(table_recodage, filtre, sep = ";") %>%
       dplyr::filter(filtre == !!filtre | is.na(filtre))
 
-    table_niveaux <- tidyr::separate_rows(table_niveaux, filtre, sep = ";") %>%
-      dplyr::filter(filtre == !!filtre | is.na(filtre))
+    if (!is.null(table_niveaux)) {
+      table_niveaux <- tidyr::separate_rows(table_niveaux, filtre, sep = ";") %>%
+        dplyr::filter(filtre == !!filtre | is.na(filtre))
+    }
   }
 
   if (nrow(table_recodage) == 0) return(table)
