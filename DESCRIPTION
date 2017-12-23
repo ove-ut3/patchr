@@ -11,13 +11,10 @@ LazyData: true
 Imports:
     divr,
     dplyr,
-    importr,
     lubridate,
-    pbapply,
     purrr,
     rlang,
     stats,
     stringr,
-    tibble,
     tidyr
 RoxygenNote: 6.0.1
