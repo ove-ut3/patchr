@@ -5,7 +5,7 @@
 \title{Renomme les champs d'un data frame selon une table de correspondance}
 \usage{
 renommer_champs(table, table_rename, source = NULL, filtre = NULL,
-  drop = TRUE)
+  normaliser = TRUE, drop = TRUE)
 }
 \arguments{
 \item{table}{Un data frame.}
@@ -15,6 +15,8 @@ renommer_champs(table, table_rename, source = NULL, filtre = NULL,
 \item{source}{Nom de la source à filtrer dans la table \code{table_rename}.}
 
 \item{filtre}{La valeur de filtre.}
+
+\item{normaliser}{Normaliser les noms de champ de la table en entrée avant de renommer.}
 
 \item{drop}{\code{TRUE}: les champs non-rensignés dans la table de correspondance sont supprimés; \code{FALSE}: tous les champs sont conservés.}
 }
