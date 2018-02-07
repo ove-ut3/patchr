@@ -228,7 +228,7 @@ recoder_factor <- function(table, table_recodage, table_niveaux = NULL, source =
   }
 
   champs_factor <- names(table) %>%
-    intersect(table_recodage$champ)
+    intersect(c(table_recodage$champ, table_niveaux$champ))
 
   ordre_champs <- names(table)
 
