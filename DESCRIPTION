@@ -9,7 +9,6 @@ License: Etalab
 Encoding: UTF-8
 LazyData: true
 Imports:
-    divr,
     dplyr,
     lubridate,
     impexp,

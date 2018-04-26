@@ -138,7 +138,9 @@ recoder_champs <- function(table, table_recodage, source = NULL, filtre = NULL, 
     }
   }
 
-  table_recodage <- dplyr::arrange(table_recodage, ordre)
+  if (!is.null(table_recodage[["ordre"]])) {
+    table_recodage <- dplyr::arrange(table_recodage, ordre)
+  }
 
   list_instructions <- ifelse(is.na(table_recodage$expression),
                               table_recodage$valeur,
@@ -240,7 +242,7 @@ recoder_factor <- function(table, table_recodage, table_niveaux = NULL, source =
     dplyr::left_join(table_recodage %>%
                        dplyr::select(champ, valeur, recodage),
                      by = c("champ", "valeur")) %>%
-    dplyr::mutate(valeur = divr::remplacer_na(valeur, recodage)) %>%
+    dplyr::mutate(valeur = ifelse(!is.na(recodage), recodage, valeur)) %>%
     dplyr::select(-recodage) %>%
     tidyr::spread(champ, valeur) %>%
     dplyr::select(-.id) %>%
