@@ -6,13 +6,12 @@
 #' @param table_rename Une table de correspondance entre anciens et nouveaux noms de champ.
 #' @param source Nom de la source à filtrer dans la table \code{table_rename}.
 #' @param filtre La valeur de filtre.
-#' @param normaliser Normaliser les noms de champ de la table en entrée avant de renommer.
 #' @param drop \code{TRUE}: les champs non-rensignés dans la table de correspondance sont supprimés; \code{FALSE}: tous les champs sont conservés.
 #'
 #' @return Un data frame dont les champs sont renommés.
 #'
 #' @export
-renommer_champs <- function(table, table_rename, source = NULL, filtre = NULL, normaliser = TRUE, drop = TRUE) {
+renommer_champs <- function(table, table_rename, source = NULL, filtre = NULL, drop = TRUE) {
 
   if (is.null(table_rename)) {
     return(table)
@@ -29,11 +28,6 @@ renommer_champs <- function(table, table_rename, source = NULL, filtre = NULL, n
   if (!is.null(filtre)) {
     table_rename <- tidyr::separate_rows(table_rename, filtre, sep = ";") %>%
       dplyr::filter(filtre == !!filtre | is.na(filtre))
-  }
-
-  if (normaliser == TRUE) {
-    table <- table %>%
-      impexp::normaliser_nom_champs()
   }
 
   colnames_maj <- dplyr::data_frame(champ = colnames(table)) %>%
