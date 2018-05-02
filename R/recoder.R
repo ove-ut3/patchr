@@ -242,7 +242,8 @@ recoder_factor <- function(table, table_recodage, table_niveaux = NULL, source =
     dplyr::left_join(table_recodage %>%
                        dplyr::select(champ, valeur, recodage),
                      by = c("champ", "valeur")) %>%
-    dplyr::mutate(valeur = ifelse(!is.na(recodage), recodage, valeur)) %>%
+    dplyr::mutate(valeur = ifelse(!is.na(recodage), recodage, valeur) %>%
+                    dplyr::na_if("[null]")) %>%
     dplyr::select(-recodage) %>%
     tidyr::spread(champ, valeur) %>%
     dplyr::select(-.id) %>%
