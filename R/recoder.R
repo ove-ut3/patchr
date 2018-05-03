@@ -142,11 +142,16 @@ recoder_champs <- function(table, table_recodage, source = NULL, filtre = NULL, 
     table_recodage <- dplyr::arrange(table_recodage, ordre)
   }
 
+  table_recodage <- table_recodage %>%
+    dplyr::mutate(classe = purrr::map(champ, ~ class(table[[.]])),
+                  valeur = ifelse(purrr::map_lgl(classe, ~ "factor" %in% .),
+                                  paste0("factor(", valeur, ", levels = levels(", champ,"))"),
+                                  valeur))
+
   list_instructions <- ifelse(is.na(table_recodage$expression),
                               table_recodage$valeur,
                               paste0("dplyr::if_else(", table_recodage$expression, ", ", table_recodage$valeur,", ", table_recodage$champ, ", ", table_recodage$champ, ")")) %>%
     as.list()
-
 
   list_champs <- table_recodage$champ %>%
     as.list()
