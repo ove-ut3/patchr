@@ -4,8 +4,7 @@
 \alias{recoder_champs}
 \title{Recoder les champs d'une table a partir d'une expression VRAI/FAUX}
 \usage{
-recoder_champs(table, table_recodage, source = NULL, filtre = NULL,
-  champs_table = TRUE)
+recoder_champs(table, table_recodage, source = NULL, filtre = NULL)
 }
 \arguments{
 \item{table}{La table à recoder.}
@@ -15,8 +14,6 @@ recoder_champs(table, table_recodage, source = NULL, filtre = NULL,
 \item{source}{Nom de la source à filtrer dans la table \code{table_recodage}.}
 
 \item{filtre}{La valeur de filtre.}
-
-\item{champs_table}{Recodage réalisé uniquement sur les champs déjà déjà présents dans la table.}
 }
 \value{
 La table recodée
