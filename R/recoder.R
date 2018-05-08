@@ -23,7 +23,7 @@ recoder_individu <- function(table, table_recodage, source = NULL, .champ_id = "
     return(table)
   }
 
- table <- dplyr::mutate(table, .id = row_number())
+  table <- dplyr::mutate(table, .id = row_number())
 
   options(warn = -1)
   id_na <- dplyr::select(table, !!.champ_id, .id) %>%
