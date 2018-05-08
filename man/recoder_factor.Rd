@@ -5,7 +5,7 @@
 \title{recoder_factor}
 \usage{
 recoder_factor(table, table_recodage, table_niveaux = NULL, source = NULL,
-  filtre = NULL)
+  filtre = NULL, creer_champs = FALSE)
 }
 \arguments{
 \item{table}{La table à recoder.}
@@ -17,6 +17,8 @@ recoder_factor(table, table_recodage, table_niveaux = NULL, source = NULL,
 \item{source}{Nom de la source à filtrer dans la table \code{table_recodage}.}
 
 \item{filtre}{La valeur de filtre.}
+
+\item{creer_champs}{Créer les champs présents dans la table de recodage ou de niveaux mais absents dans la table à recoder.}
 }
 \value{
 La table recodée

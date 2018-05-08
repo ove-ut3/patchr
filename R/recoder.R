@@ -198,11 +198,12 @@ as_factor <- function(champ_factor, table_niveaux = NULL) {
 #' @param table_niveaux La table des niveaux.
 #' @param source Nom de la source à filtrer dans la table \code{table_recodage}.
 #' @param filtre La valeur de filtre.
+#' @param creer_champs Créer les champs présents dans la table de recodage ou de niveaux mais absents dans la table à recoder.
 #'
 #' @return La table recodée
 #'
 #' @export
-recoder_factor <- function(table, table_recodage, table_niveaux = NULL, source = NULL, filtre = NULL) {
+recoder_factor <- function(table, table_recodage, table_niveaux = NULL, source = NULL, filtre = NULL, creer_champs = FALSE) {
 
   if (nrow(table) == 0) return(table)
 
@@ -225,6 +226,22 @@ recoder_factor <- function(table, table_recodage, table_niveaux = NULL, source =
   }
 
   if (nrow(table_recodage) == 0) return(table)
+
+  if (creer_champs == TRUE) {
+
+    champs_a_creer <- c(table_recodage$champ, table_niveaux$champ) %>%
+      unique() %>%
+      .[which(!. %in% names(table))]
+
+    if (length(champs_a_creer) >= 1) {
+
+      table <- table %>%
+        source.maj::recoder_champs(table_recodage = dplyr::tibble(champ = champs_a_creer,
+                                                                  valeur = "NA_character_",
+                                                                  expression = NA_character_))
+    }
+
+  }
 
   if (intersect(names(table), table_recodage$champ) %>% length() == 0) {
     return(table)
