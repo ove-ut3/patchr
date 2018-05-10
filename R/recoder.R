@@ -95,6 +95,19 @@ recoder_individu <- function(table, table_recodage, source = NULL, .champ_id = "
 #'
 #' @return La table recodée
 #'
+#' @examples
+#' # Recodage sans expression
+#' source.maj::recoder_champs(
+#' table = dplyr::tibble(test = 1L),
+#' table_recodage = dplyr::tibble(expression = NA_character_, champ = "test", valeur = "2L")
+#' )
+#'
+#' # Recodage avec expression
+#' source.maj::recoder_champs(
+#' table = dplyr::tibble(test = c(1L, 2L)),
+#' table_recodage = dplyr::tibble(expression = "test == 2", champ = "test", valeur = "3L")
+#' )
+#'
 #' @export
 recoder_champs <- function(table, table_recodage, source = NULL, filtre = NULL) {
 
