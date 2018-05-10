@@ -14,7 +14,6 @@ Imports:
     magrittr,
     purrr,
     rlang,
-    stats,
     stringr,
     tidyr
 RoxygenNote: 6.0.1

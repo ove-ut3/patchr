@@ -116,7 +116,7 @@ recoder_champs <- function(table, table_recodage, source = NULL, filtre = NULL) 
 
   if (length(champs_a_creer) >= 1) {
 
-    classe_champs_a_creer <- table_recodage %>%
+    list_mutate <- table_recodage %>%
       dplyr::filter(champ %in% champs_a_creer) %>%
       dplyr::mutate(classe = "character",
                     classe = ifelse(stringr::str_detect(valeur, "^\\d+L$"), "integer", classe),
@@ -126,10 +126,11 @@ recoder_champs <- function(table, table_recodage, source = NULL, filtre = NULL) 
       dplyr::select(champ, classe) %>%
       unique() %>%
       dplyr::pull(classe) %>%
-      paste0("NA_", ., "_")
+      paste0("NA_", ., "_") %>%
+      as.list()
 
-    list_mutate <- stats::setNames(as.list(classe_champs_a_creer), as.list(champs_a_creer)) %>%
-      lapply(rlang::parse_quosure)
+    names(list_mutate) <- champs_a_creer
+    list_mutate <- lapply(list_mutate, rlang::parse_quosure)
 
     table <- dplyr::mutate(table, !!!list_mutate)
   }
@@ -144,16 +145,13 @@ recoder_champs <- function(table, table_recodage, source = NULL, filtre = NULL) 
                                   paste0("factor(", valeur, ", levels = levels(", champ,"))"),
                                   valeur))
 
-  list_instructions <- ifelse(is.na(table_recodage$expression),
+  list_mutate <- ifelse(is.na(table_recodage$expression),
                               table_recodage$valeur,
                               paste0("dplyr::if_else(", table_recodage$expression, ", ", table_recodage$valeur,", ", table_recodage$champ, ", ", table_recodage$champ, ")")) %>%
     as.list()
 
-  list_champs <- table_recodage$champ %>%
-    as.list()
-
-  list_mutate <- stats::setNames(list_instructions, list_champs) %>%
-    lapply(rlang::parse_quosure)
+  names(list_mutate) <- table_recodage$champ
+  list_mutate <- lapply(list_mutate, rlang::parse_quosure)
 
   table <- dplyr::mutate(table, !!!list_mutate)
 
