@@ -21,7 +21,7 @@ transcoder_champs <- function(table, content_maj) {
                                              purrr::map_chr(1) %>%
                                              tolower()
     ) %>%
-      dplyr::mutate(num_champ = row_number()) %>%
+      dplyr::mutate(num_champ = dplyr::row_number()) %>%
       dplyr::inner_join(content_maj %>%
                           dplyr::rename(classe_maj = classe),
                         by = "champ") %>%

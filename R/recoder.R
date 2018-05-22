@@ -23,7 +23,7 @@ recoder_individu <- function(table, table_recodage, source = NULL, .champ_id = "
     return(table)
   }
 
-  table <- dplyr::mutate(table, .id = row_number())
+  table <- dplyr::mutate(table, .id = dplyr::row_number())
 
   options(warn = -1)
   id_na <- dplyr::select(table, !!.champ_id, .id) %>%
@@ -264,7 +264,7 @@ recoder_factor <- function(table, table_recodage, table_niveaux = NULL, source =
   ordre_champs <- names(table)
 
   recoder <- table %>%
-    dplyr::mutate(.id = row_number()) %>%
+    dplyr::mutate(.id = dplyr::row_number()) %>%
     dplyr::select(.id, champs_factor) %>%
     dplyr::mutate_at(dplyr::vars(champs_factor), as.character) %>%
     tidyr::gather("champ", "valeur", -.id) %>%
