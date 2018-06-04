@@ -92,6 +92,7 @@ recoder_individu <- function(table, table_recodage, source = NULL, .champ_id = "
 #' @param table_recodage La table de recodage.
 #' @param source Nom de la source à filtrer dans la table \code{table_recodage}.
 #' @param filtre La valeur de filtre.
+#' @param creer_champs Créer les champs présents dans la table de recodage ou de niveaux mais absents dans la table à recoder.
 #'
 #' @return La table recodée
 #'
@@ -109,7 +110,7 @@ recoder_individu <- function(table, table_recodage, source = NULL, .champ_id = "
 #' )
 #'
 #' @export
-recoder_champs <- function(table, table_recodage, source = NULL, filtre = NULL) {
+recoder_champs <- function(table, table_recodage, source = NULL, filtre = NULL, creer_champs = TRUE) {
 
   if (nrow(table) == 0) return(table)
 
@@ -122,30 +123,37 @@ recoder_champs <- function(table, table_recodage, source = NULL, filtre = NULL) 
       dplyr::filter(filtre == !!filtre | is.na(filtre))
   }
 
+  if (creer_champs == FALSE) {
+    table_recodage <- dplyr::filter(table_recodage, champ %in% names(table))
+  }
+
   if (nrow(table_recodage) == 0) return(table)
 
-  champs_a_creer <- table_recodage$champ[which(!table_recodage$champ %in% names(table))] %>%
-      unique()
+  if (creer_champs == TRUE) {
 
-  if (length(champs_a_creer) >= 1) {
+    champs_a_creer <- table_recodage$champ[which(!table_recodage$champ %in% names(table))] %>%
+        unique()
 
-    list_mutate <- table_recodage %>%
-      dplyr::filter(champ %in% champs_a_creer) %>%
-      dplyr::mutate(classe = "character",
-                    classe = ifelse(stringr::str_detect(valeur, "^\\d+L$"), "integer", classe),
-                    classe = ifelse(valeur == "NA_integer_", "integer", classe),
-                    classe = ifelse(stringr::str_detect(valeur, "^[\\d\\.]+$"), "real", classe),
-                    classe = ifelse(valeur == "NA_real_", "real", classe)) %>%
-      dplyr::select(champ, classe) %>%
-      unique() %>%
-      dplyr::pull(classe) %>%
-      paste0("NA_", ., "_") %>%
-      as.list()
+    if (length(champs_a_creer) >= 1) {
 
-    names(list_mutate) <- champs_a_creer
-    list_mutate <- lapply(list_mutate, rlang::parse_quosure)
+      list_mutate <- table_recodage %>%
+        dplyr::filter(champ %in% champs_a_creer) %>%
+        dplyr::mutate(classe = "character",
+                      classe = ifelse(stringr::str_detect(valeur, "^\\d+L$"), "integer", classe),
+                      classe = ifelse(valeur == "NA_integer_", "integer", classe),
+                      classe = ifelse(stringr::str_detect(valeur, "^[\\d\\.]+$"), "real", classe),
+                      classe = ifelse(valeur == "NA_real_", "real", classe)) %>%
+        dplyr::select(champ, classe) %>%
+        unique() %>%
+        dplyr::pull(classe) %>%
+        paste0("NA_", ., "_") %>%
+        as.list()
 
-    table <- dplyr::mutate(table, !!!list_mutate)
+      names(list_mutate) <- champs_a_creer
+      list_mutate <- lapply(list_mutate, rlang::parse_quosure)
+
+      table <- dplyr::mutate(table, !!!list_mutate)
+    }
   }
 
   if (!is.null(table_recodage[["ordre"]])) {
