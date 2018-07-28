@@ -4,8 +4,8 @@
 \alias{recoder_factor}
 \title{recoder_factor}
 \usage{
-recoder_factor(table, table_recodage, table_niveaux = NULL, source = NULL,
-  filtre = NULL, creer_champs = FALSE)
+recoder_factor(table, table_recodage, table_niveaux = NULL,
+  source = NULL, filtre = NULL, creer_champs = FALSE)
 }
 \arguments{
 \item{table}{La table à recoder.}
