@@ -41,7 +41,7 @@ renommer_champs <- function(table, table_rename, source = NULL, filtre = NULL, d
       colnames_maj <- dplyr::filter(colnames_maj, !is.na(rename))
     }
   } else if (drop == FALSE){
-    colnames_maj <- dplyr::mutate(colnames_maj, rename = ifelse(!is.na(rename), rename, caractr::camel_to_snake_case(champ)))
+    colnames_maj <- dplyr::mutate(colnames_maj, rename = ifelse(!is.na(rename), rename, caractr::str_camel_to_snake_case(champ)))
   }
 
   colnames_maj <- colnames_maj[["rename"]]
