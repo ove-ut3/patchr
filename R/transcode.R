@@ -41,7 +41,7 @@ transcode <- function(data, data_transcode) {
 
         if (new_class == "character") data[[column]] <- as.character(data[[column]])
         else if (new_class == "date") data[[column]] <- patchr::to_date(data[[column]])
-        else if (new_class == "numeric") data[[column]] <- patchr::to_numeric(data[[column]])
+        else if (new_class == "numeric") data[[column]] <- patchr::as_numeric(data[[column]])
         else if (new_class == "integer") data[[column]] <- patchr::to_integer(data[[column]])
         else if (new_class == "factor") data[[column]] <- as.factor(data[[column]])
 
