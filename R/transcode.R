@@ -1,50 +1,54 @@
-#' Transcode les champs d'un data frame selon une table de correspondance
+#' Change column classes in a data frame according to a correspondance table.
 #'
-#' Transcode les champs d'un data frame selon une table de correspondance.
+#' The correspondance table data_transcode must at least contains tow columns : \code{column} for the colname and \code{class} for the new R class.
 #'
-#' @param table Un data frame.
-#' @param content_maj Une table de correspondance entre les noms de champ et les classes attendus.
+#' @param data A data frame.
+#' @param data_transcode A correspondance between colmanes and new R classes.
 #'
-#' @return Un data frame dont les champs sont transcodés.
+#' @return A transcoded data frame.
+#'
+#' @examples
+#' dplyr::tibble(var1 = "a", var2 = 1) %>%
+#'   patchr::transcode(dplyr::tibble(column = "var2", class = "character"))
 #'
 #' @export
-transcoder_champs <- function(table, content_maj) {
+transcode <- function(data, data_transcode) {
 
-  if (any(class(table) == "data.frame") == FALSE) {
+  if (any(class(data) == "data.frame") == FALSE) {
 
-    return(table)
+    return(data)
 
   } else {
 
-    table_transcodage <- dplyr::data_frame(champ = colnames(table),
-                                           classe = lapply(table, class) %>%
+    data_transcodage <- dplyr::data_frame(column = colnames(data),
+                                           class = lapply(data, class) %>%
                                              purrr::map_chr(1) %>%
                                              tolower()
     ) %>%
-      dplyr::mutate(num_champ = dplyr::row_number()) %>%
-      dplyr::inner_join(content_maj %>%
-                          dplyr::rename(classe_maj = classe),
-                        by = "champ") %>%
-      dplyr::filter(classe != classe_maj)
+      dplyr::mutate(num_column = dplyr::row_number()) %>%
+      dplyr::inner_join(data_transcode %>%
+                          dplyr::rename(new_class = class),
+                        by = "column") %>%
+      dplyr::filter(class != new_class)
 
-    if (nrow(table_transcodage) != 0) {
+    if (nrow(data_transcodage) != 0) {
 
-      for(num_transcodage in 1:nrow(table_transcodage)) {
+      for(num_transcodage in 1:nrow(data_transcodage)) {
 
-        champ <- table_transcodage$champ[num_transcodage]
-        classe_maj <- table_transcodage$classe_maj[num_transcodage]
+        column <- data_transcodage$column[num_transcodage]
+        new_class <- data_transcodage$new_class[num_transcodage]
 
-        if (classe_maj == "character") table[[champ]] <- as.character(table[[champ]])
-        else if (classe_maj == "date") table[[champ]] <- patchr::to_date(table[[champ]])
-        else if (classe_maj == "numeric") table[[champ]] <- patchr::to_numeric(table[[champ]])
-        else if (classe_maj == "integer") table[[champ]] <- patchr::to_integer(table[[champ]])
-        else if (classe_maj == "factor") table[[champ]] <- as.factor(table[[champ]])
+        if (new_class == "character") data[[column]] <- as.character(data[[column]])
+        else if (new_class == "date") data[[column]] <- patchr::to_date(data[[column]])
+        else if (new_class == "numeric") data[[column]] <- patchr::to_numeric(data[[column]])
+        else if (new_class == "integer") data[[column]] <- patchr::to_integer(data[[column]])
+        else if (new_class == "factor") data[[column]] <- as.factor(data[[column]])
 
       }
 
     }
 
-    return(table)
+    return(data)
   }
 
 }
