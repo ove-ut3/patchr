@@ -2,7 +2,7 @@
 % Please edit documentation in R/rename.R
 \name{rename}
 \alias{rename}
-\title{Rename data frame column names according to a correspondance table.}
+\title{Rename data frame columns.}
 \usage{
 rename(data, data_rename, drop = TRUE)
 }
@@ -17,6 +17,7 @@ rename(data, data_rename, drop = TRUE)
 A renamed data frame.
 }
 \description{
+The data frame columns are renamed according to a correspondance table.\cr
 The correspondance table data_remane must at least contains tow columns : \code{column} for the old colnames and \code{rename} for the new colnames.
 }
 \examples{

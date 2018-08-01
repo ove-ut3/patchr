@@ -1,5 +1,6 @@
-#' Rename data frame column names according to a correspondance table.
+#' Rename data frame columns.
 #'
+#' The data frame columns are renamed according to a correspondance table.\cr
 #' The correspondance table data_remane must at least contains tow columns : \code{column} for the old colnames and \code{rename} for the new colnames.
 #'
 #' @param data A data frame.
