@@ -165,86 +165,70 @@ recode_formula <- function(data, data_recode, new_cols = TRUE) {
   return(data)
 }
 
-#' recoder_factor
+#' Recode columns to factor in a data frame.
 #'
-#' @param table La table à recoder.
-#' @param table_recodage La table de recodage.
-#' @param table_niveaux La table des niveaux.
-#' @param source Nom de la source à filtrer dans la table \code{table_recodage}.
-#' @param filtre La valeur de filtre.
-#' @param creer_champs Créer les champs présents dans la table de recodage ou de niveaux mais absents dans la table à recoder.
+#' The data frame is recoded according to a correspondance table.\cr
+#' The correpondance table contains a least three columns : colname, value and factor.\cr
+#' An optional table data_levels contains ordered levels for each colname. It contains at least three colmuns : colname, order, level.
 #'
-#' @return La table recodée
+#' @param data A data frame.
+#' @param data_recode A correspondance table containing between character values and unordered level factors.
+#' @param data_levels An optional correpondance table between colnames and ordered levels.
+#' @param new_cols If \code{TRUE} then it computes all colnames referenced in data_recode, not only colnames in data at the first place.
+#'
+#' @return A recoded data frame.
 #'
 #' @export
-recoder_factor <- function(table, table_recodage, table_niveaux = NULL, source = NULL, filtre = NULL, creer_champs = FALSE) {
+recode_factor <- function(data, data_recode, data_levels = NULL, new_cols = FALSE) {
 
-  if (nrow(table) == 0) return(table)
+  if (nrow(data) == 0) return(data)
 
-  if (!is.null(source)) {
-    table_recodage <- dplyr::filter(table_recodage, source %in% !!source)
+  if (nrow(data_recode) == 0) return(table)
 
-    if (!is.null(table_niveaux)) {
-      table_niveaux <- dplyr::filter(table_niveaux, source %in% !!source)
-    }
-  }
+  if (new_cols == TRUE) {
 
-  if (!is.null(filtre)) {
-    table_recodage <- tidyr::separate_rows(table_recodage, filtre, sep = ";") %>%
-      dplyr::filter(filtre == !!filtre | is.na(filtre))
-
-    if (!is.null(table_niveaux)) {
-      table_niveaux <- tidyr::separate_rows(table_niveaux, filtre, sep = ";") %>%
-        dplyr::filter(filtre == !!filtre | is.na(filtre))
-    }
-  }
-
-  if (nrow(table_recodage) == 0) return(table)
-
-  if (creer_champs == TRUE) {
-
-    champs_a_creer <- c(table_recodage$champ, table_niveaux$champ) %>%
+    new_columns <- c(data_recode$colname, data_levels$colname) %>%
       unique() %>%
       .[which(!. %in% names(table))]
 
-    if (length(champs_a_creer) >= 1) {
+    if (length(new_columns) >= 1) {
 
       table <- table %>%
-        patchr::recoder_champs(table_recodage = dplyr::tibble(champ = champs_a_creer,
-                                                                  valeur = "NA_character_",
-                                                                  expression = NA_character_))
+        patchr::recode_formula(data_recode = dplyr::tibble(colname = new_columns,
+                                                           value = "NA_character_",
+                                                           expression = NA_character_))
     }
 
   }
 
-  if (intersect(names(table), table_recodage$champ) %>% length() == 0) {
+  if (intersect(names(table), data_recode$colname) %>% length() == 0) {
     return(table)
   }
 
-  champs_factor <- names(table) %>%
-    intersect(c(table_recodage$champ, table_niveaux$champ))
+  cols_factor <- names(table) %>%
+    intersect(c(data_recode$colname, data_levels$colname))
 
-  ordre_champs <- names(table)
+  cols_order <- names(table)
 
-  recoder <- table %>%
+  recode <- table %>%
     dplyr::mutate(.id = dplyr::row_number()) %>%
-    dplyr::select(.id, champs_factor) %>%
-    dplyr::mutate_at(dplyr::vars(champs_factor), as.character) %>%
-    tidyr::gather("champ", "valeur", -.id) %>%
-    dplyr::left_join(table_recodage %>%
-                       dplyr::select(champ, valeur, recodage),
-                     by = c("champ", "valeur")) %>%
-    dplyr::mutate(valeur = ifelse(!is.na(recodage), recodage, valeur) %>%
+    dplyr::select(.id, cols_factor) %>%
+    dplyr::mutate_at(dplyr::vars(cols_factor), as.character) %>%
+    tidyr::gather("colname", "value", -.id) %>%
+    dplyr::left_join(data_recode %>%
+                       dplyr::select(colname, value, recodage),
+                     by = c("colname", "value")) %>%
+    dplyr::mutate(value = ifelse(!is.na(recodage), recodage, value) %>%
                     dplyr::na_if("[null]")) %>%
     dplyr::select(-recodage) %>%
-    tidyr::spread(champ, valeur) %>%
+    tidyr::spread(colname, value) %>%
     dplyr::select(-.id) %>%
-    dplyr::mutate_at(dplyr::vars(champs_factor), patchr::as_factor, table_niveaux) %>%
+    dplyr::mutate_at(dplyr::vars(cols_factor), patchr::as_factor, data_levels) %>%
     dplyr::bind_cols(table %>%
-                       dplyr::select(which(!names(.) %in% champs_factor)))
+                       dplyr::select(which(!names(.) %in% cols_factor)))
 
-  recoder <- recoder %>%
-    dplyr::select(purrr::map_int(ordre_champs, ~ which(. == names(recoder))))
+  recode <- recode %>%
+    dplyr::select(purrr::map_int(cols_order, ~ which(. == names(recode))))
 
-  return(recoder)
+  return(recode)
 }
