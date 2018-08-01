@@ -2,7 +2,7 @@
 % Please edit documentation in R/transcode.R
 \name{transcode}
 \alias{transcode}
-\title{Change column classes in a data frame according to a correspondance table.}
+\title{Change column classes in a data frame.}
 \usage{
 transcode(data, data_transcode)
 }
@@ -15,6 +15,7 @@ transcode(data, data_transcode)
 A transcoded data frame.
 }
 \description{
+The data frame columns are transcoded according to a correspondance table.\cr
 The correspondance table data_transcode must at least contains tow columns : \code{column} for the colname and \code{class} for the new R class.
 }
 \examples{
