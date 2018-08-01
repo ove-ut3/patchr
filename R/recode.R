@@ -80,99 +80,89 @@ recode_id <- function(data, data_recode, colname_id) {
   return(recode)
 }
 
-#' Recoder les champs d'une table a partir d'une expression VRAI/FAUX
+#' Recode a data frame with formulas.
 #'
-#' Recoder les champs d'une table à partir d'une expression VRAI/FAUX.
+#' The data frame is recoded according to a correspondance table containing formulas.\cr
+#' The correpondance table contains a least three columns : expression, colname and value.
 #'
-#' @param table La table à recoder.
-#' @param table_recodage La table de recodage.
-#' @param source Nom de la source à filtrer dans la table \code{table_recodage}.
-#' @param filtre La valeur de filtre.
-#' @param creer_champs Créer les champs présents dans la table de recodage ou de niveaux mais absents dans la table à recoder.
+#' @param data A data frame.
+#' @param data_recode The correspondance table containing formulas.
+#' @param new_cols If \code{TRUE} then it computes all colnames referenced in data_recode, not only colnames in data at the first place.
 #'
-#' @return La table recodée
+#' @return A recoded data frame.
 #'
 #' @examples
-#' # Recodage sans expression
-#' patchr::recoder_champs(
-#' table = dplyr::tibble(test = 1L),
-#' table_recodage = dplyr::tibble(expression = NA_character_, champ = "test", valeur = "2L")
+#' # Recode without expression
+#' patchr::recode_formula(
+#' data = dplyr::tibble(test = 1L),
+#' data_recode = dplyr::tibble(expression = NA_character_, colname = "test", value = "2L")
 #' )
 #'
-#' # Recodage avec expression
-#' patchr::recoder_champs(
-#' table = dplyr::tibble(test = c(1L, 2L)),
-#' table_recodage = dplyr::tibble(expression = "test == 2", champ = "test", valeur = "3L")
+#' # Recode with expression
+#' patchr::recode_formula(
+#' data = dplyr::tibble(test = c(1L, 2L)),
+#' data_recode = dplyr::tibble(expression = "test == 2", colname = "test", value = "3L")
 #' )
 #'
 #' @export
-recoder_champs <- function(table, table_recodage, source = NULL, filtre = NULL, creer_champs = TRUE) {
+recode_formula <- function(data, data_recode, new_cols = TRUE) {
 
-  if (nrow(table) == 0) return(table)
+  if (nrow(data) == 0) return(data)
 
-  if (!is.null(source)) {
-    table_recodage <- dplyr::filter(table_recodage, source %in% !!source)
+  if (new_cols == FALSE) {
+    data_recode <- dplyr::filter(data_recode, colname %in% names(data))
   }
 
-  if (!is.null(filtre)) {
-    table_recodage <- tidyr::separate_rows(table_recodage, filtre, sep = ";") %>%
-      dplyr::filter(filtre == !!filtre | is.na(filtre))
-  }
+  if (nrow(data_recode) == 0) return(data)
 
-  if (creer_champs == FALSE) {
-    table_recodage <- dplyr::filter(table_recodage, champ %in% names(table))
-  }
+  if (new_cols == TRUE) {
 
-  if (nrow(table_recodage) == 0) return(table)
-
-  if (creer_champs == TRUE) {
-
-    champs_a_creer <- table_recodage$champ[which(!table_recodage$champ %in% names(table))] %>%
+    new_columns <- data_recode$colname[which(!data_recode$colname %in% names(data))] %>%
         unique()
 
-    if (length(champs_a_creer) >= 1) {
+    if (length(new_columns) >= 1) {
 
-      list_mutate <- table_recodage %>%
-        dplyr::filter(champ %in% champs_a_creer) %>%
-        dplyr::mutate(classe = "character",
-                      classe = ifelse(stringr::str_detect(valeur, "^\\d+L$"), "integer", classe),
-                      classe = ifelse(valeur == "NA_integer_", "integer", classe),
-                      classe = ifelse(stringr::str_detect(valeur, "^[\\d\\.]+$"), "real", classe),
-                      classe = ifelse(valeur == "NA_real_", "real", classe)) %>%
-        dplyr::select(champ, classe) %>%
+      list_mutate <- data_recode %>%
+        dplyr::filter(colname %in% new_columns) %>%
+        dplyr::mutate(class = "character",
+                      class = ifelse(stringr::str_detect(value, "^\\d+L$"), "integer", class),
+                      class = ifelse(value == "NA_integer_", "integer", class),
+                      class = ifelse(stringr::str_detect(value, "^[\\d\\.]+$"), "real", class),
+                      class = ifelse(value == "NA_real_", "real", class)) %>%
+        dplyr::select(colname, class) %>%
         unique() %>%
-        dplyr::pull(classe) %>%
+        dplyr::pull(class) %>%
         paste0("NA_", ., "_") %>%
         as.list()
 
-      names(list_mutate) <- champs_a_creer
+      names(list_mutate) <- new_columns
       list_mutate <- lapply(list_mutate, rlang::parse_quosure)
 
-      table <- dplyr::mutate(table, !!!list_mutate)
+      data <- dplyr::mutate(data, !!!list_mutate)
     }
   }
 
-  if (!is.null(table_recodage[["ordre"]])) {
-    table_recodage <- dplyr::arrange(table_recodage, ordre)
+  if (!is.null(data_recode[["order"]])) {
+    data_recode <- dplyr::arrange(data_recode, order)
   }
 
-  table_recodage <- table_recodage %>%
-    dplyr::mutate(classe = purrr::map(champ, ~ class(table[[.]])),
-                  valeur = ifelse(purrr::map_lgl(classe, ~ "factor" %in% .),
-                                  paste0("factor(", valeur, ", levels = levels(", champ,"))"),
-                                  valeur))
+  data_recode <- data_recode %>%
+    dplyr::mutate(classe = purrr::map(colname, ~ class(data[[.]])),
+                  value = ifelse(purrr::map_lgl(classe, ~ "factor" %in% .),
+                                  paste0("factor(", value, ", levels = levels(", colname,"))"),
+                                  value))
 
-  list_mutate <- ifelse(is.na(table_recodage$expression),
-                              table_recodage$valeur,
-                              paste0("dplyr::if_else(", table_recodage$expression, ", ", table_recodage$valeur,", ", table_recodage$champ, ", ", table_recodage$champ, ")")) %>%
+  list_mutate <- ifelse(is.na(data_recode$expression),
+                              data_recode$value,
+                              paste0("dplyr::if_else(", data_recode$expression, ", ", data_recode$value,", ", data_recode$colname, ", ", data_recode$colname, ")")) %>%
     as.list()
 
-  names(list_mutate) <- table_recodage$champ
+  names(list_mutate) <- data_recode$colname
   list_mutate <- lapply(list_mutate, rlang::parse_quosure)
 
-  table <- dplyr::mutate(table, !!!list_mutate)
+  data <- dplyr::mutate(data, !!!list_mutate)
 
-  return(table)
+  return(data)
 }
 
 #' recoder_factor
