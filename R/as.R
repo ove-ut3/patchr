@@ -82,66 +82,61 @@ as_integer <- function(x) {
   }
 }
 
-#' Transcode un vecteur vers un type date
+#' Transcode a vector into date.
 #'
-#' Transcode un vecteur vers un type date
+#' @param x A vector.
 #'
-#' @param vecteur Un vecteur.
-#'
-#' @return Un vecteur de type date
+#' @return A date vector.
 #'
 #' @export
-to_date <- function(vecteur, origin = "1899-12-30") {
+as_date <- function(x, origin = "1899-12-30") {
 
-  to_date <- as.Date(rep(NA, length(vecteur)))
+  as_date <- as.Date(rep(NA, length(x)))
 
-  if (any(class(vecteur) %in% c("character", "factor")) == TRUE) {
+  if (any(class(x) %in% c("character", "factor")) == TRUE) {
 
-    num_format <- stringr::str_detect(vecteur, "^\\d{5}(\\.0+)?$") %>% which()
-    to_date[num_format] <- as.Date.numeric(as.integer(vecteur[num_format]), origin)
+    position <- stringr::str_detect(x, "^\\d{5}(\\.0+)?$") %>% which()
+    as_date[position] <- as.Date.numeric(as.integer(x[position]), origin)
 
-    num_format <- stringr::str_detect(vecteur, "^\\d{1,2}/\\d{1,2}/\\d{4}$") %>% which()
-    #to_date[num_format] <- dmy(vecteur[num_format])
-    to_date[num_format] <- as.Date(vecteur[num_format], "%d/%m/%Y")
+    position <- stringr::str_detect(x, "^\\d{1,2}/\\d{1,2}/\\d{4}$") %>% which()
+    as_date[position] <- as.Date(x[position], "%d/%m/%Y")
 
-    num_format <- stringr::str_detect(vecteur, "^\\d{1,2}/\\d{4}$") %>% which()
-    #to_date[num_format] <- dmy(vecteur[num_format])
-    to_date[num_format] <- as.Date(paste0("01/", vecteur[num_format]), "%d/%m/%Y")
+    position <- stringr::str_detect(x, "^\\d{1,2}/\\d{4}$") %>% which()
+    as_date[position] <- as.Date(paste0("01/", x[position]), "%d/%m/%Y")
 
-    num_format <- stringr::str_detect(vecteur, "^\\d{1,2}/\\d{1,2}/\\d{2}$") %>% which()
-    #to_date[num_format] <- dmy(vecteur[num_format])
-    to_date[num_format] <- as.Date(vecteur[num_format], "%d/%m/%y") %>%
+    position <- stringr::str_detect(x, "^\\d{1,2}/\\d{1,2}/\\d{2}$") %>% which()
+    as_date[position] <- as.Date(x[position], "%d/%m/%y") %>%
       ifelse(. > lubridate::today(), . - 100 * 365.25, .) %>%
       lubridate::as_date()
 
-    num_format <- stringr::str_detect(vecteur, "^\\d{1,2}-\\d{1,2}-\\d{4}$") %>% which()
-    #to_date[num_format] <- dmy(vecteur[num_format])
-    to_date[num_format] <- as.Date(vecteur[num_format], "%d-%m-%Y")
+    position <- stringr::str_detect(x, "^\\d{1,2}-\\d{1,2}-\\d{4}$") %>% which()
+    as_date[position] <- as.Date(x[position], "%d-%m-%Y")
 
-    num_format <- stringr::str_detect(vecteur, "^\\d{1,2}-\\d{1,2}-\\d{2}$") %>% which()
-    #to_date[num_format] <- dmy(vecteur[num_format])
-    to_date[num_format] <- as.Date(vecteur[num_format], "%d-%m-%y") %>%
+    position <- stringr::str_detect(x, "^\\d{1,2}-\\d{1,2}-\\d{2}$") %>% which()
+    as_date[position] <- as.Date(x[position], "%d-%m-%y") %>%
       ifelse(. > lubridate::today(), . - 100 * 365.25, .) %>%
       lubridate::as_date()
 
-    num_format <- stringr::str_detect(vecteur, "^\\d{4}-\\d{1,2}-\\d{1,2}$") %>% which()
-    #to_date[num_format] <- dmy(vecteur[num_format])
-    to_date[num_format] <- as.Date(vecteur[num_format])
+    position <- stringr::str_detect(x, "^\\d{4}-\\d{1,2}-\\d{1,2}$") %>% which()
+    as_date[position] <- as.Date(x[position])
 
-    num_format <- stringr::str_detect(vecteur, "^\\d{4}/\\d{1,2}/\\d{1,2}$") %>% which()
-    #to_date[num_format] <- dmy(vecteur[num_format])
-    to_date[num_format] <- as.Date(vecteur[num_format])
+    position <- stringr::str_detect(x, "^\\d{4}/\\d{1,2}/\\d{1,2}$") %>% which()
+    as_date[position] <- as.Date(x[position])
 
-  } else if (any(class(vecteur) %in% c("numeric", "integer")) == TRUE) {
-    num_format <- stringr::str_detect(as.character(vecteur), "^\\d{5}$") %>% which()
-    to_date[num_format] <- as.Date.numeric(vecteur[num_format], origin)
-
-  } else if (any(class(vecteur) == "POSIXct") == TRUE) {
-    to_date <- as.Date.POSIXct(vecteur)
-
+    return(as_date)
   }
 
-  return(to_date)
+  if (any(class(x) %in% c("numeric", "integer")) == TRUE) {
+    position <- stringr::str_detect(as.character(x), "^\\d{5}$") %>% which()
+    as_date[position] <- as.Date.numeric(x[position], origin)
+
+    return(as_date)
+  }
+
+  if (any(class(x) == "POSIXct") == TRUE) {
+    return(as.Date.POSIXct(x))
+  }
+
 }
 
 #' as_factor
