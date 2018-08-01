@@ -21,26 +21,23 @@ filter_data_patch <- function(data, source = NULL, filtre = NULL) {
   return(data)
 }
 
-#' Supprime les doublons d'une table selon un champ
+#' Remove duplicate rows from a table according a colname.
 #'
-#' Supprime les doublons d'une table selon un champ.
+#' @param data A data frame.
+#' @param colname A column name for which duplicate rows are removed.
 #'
-#' @param table Un data frame.
-#' @param champ Un champ pour lequel les doublons sont supprimés.
-#'
-#' @return un data frame.
+#' @return A data frame with no duplicate for colname.
 #'
 #' @export
-supprimer_doublons_champ <- function(table, champ) {
+remove_duplicate <- function(data, colname) {
 
-  quo_champ <- dplyr::enquo(champ)
+  quo_colname <- dplyr::enquo(colname)
 
-  supprimer_doublons_champ <- tidyr::nest(table, !!quo_champ) %>%
-    dplyr::mutate(!!dplyr::quo_name(quo_champ) := purrr::map_chr(data, ~ ifelse(length(.[[1]]) == 1, .[[1]], NA_character_))) %>%
+  remove_duplicate <- tidyr::nest(data, !!quo_colname) %>%
+    dplyr::mutate(!!dplyr::quo_name(quo_colname) := purrr::map_chr(data, ~ ifelse(length(.[[1]]) == 1, .[[1]], NA_character_))) %>%
     dplyr::select(-data)
 
-  return(supprimer_doublons_champ)
-
+  return(remove_duplicate)
 }
 
 #' Extract duplicate rows from a data frame.
