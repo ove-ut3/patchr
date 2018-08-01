@@ -2,16 +2,19 @@
 % Please edit documentation in R/as.R
 \name{as_factor}
 \alias{as_factor}
-\title{as_factor}
+\title{Transcode a character vector into an factor.}
 \usage{
-as_factor(champ_factor, table_niveaux = NULL)
+as_factor(string, data_levels = NULL)
 }
 \arguments{
-\item{champ_factor}{\dots}
+\item{string}{A character vector.}
 
-\item{table_niveaux}{\dots}
+\item{data_levels}{An optional correpondance table between colnames and ordered levels.}
+}
+\value{
+A ordered leveled factor.
 }
 \description{
-as_factor
+An optional table data_levels contains ordered levels a colname. It contains at least three colmuns : colname, order, level.
 }
 \keyword{internal}

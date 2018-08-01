@@ -141,33 +141,37 @@ as_date <- function(x, origin = "1899-12-30") {
 
 }
 
-#' as_factor
+#' Transcode a character vector into an factor.
 #'
-#' @param champ_factor \dots
-#' @param table_niveaux \dots
+#' An optional table data_levels contains ordered levels a colname. It contains at least three colmuns : colname, order, level.
+#'
+#' @param string A character vector.
+#' @param data_levels An optional correpondance table between colnames and ordered levels.
+#'
+#' @return A ordered leveled factor.
 #'
 #' @export
 #' @keywords internal
-as_factor <- function(champ_factor, table_niveaux = NULL) {
+as_factor <- function(string, data_levels = NULL) {
 
-  if (is.null(table_niveaux)) {
-    champ_factor <- as.factor(champ_factor)
-    return(champ_factor)
+  if (is.null(data_levels)) {
+    string <- as.factor(string)
+    return(string)
   }
 
-  nom_champ_factor <- dplyr::enquo(champ_factor) %>%
+  colname <- dplyr::enquo(string) %>%
     dplyr::quo_name()
 
-  niveaux <- table_niveaux %>%
-    dplyr::filter(champ == nom_champ_factor) %>%
+  levels <- data_levels %>%
+    dplyr::filter(colname == !!colname) %>%
     dplyr::arrange(ordre) %>%
-    dplyr::pull(niveau)
+    dplyr::pull(level)
 
-  if (length(niveaux) != 0) {
-    champ_factor <- factor(champ_factor, levels = niveaux)
+  if (length(levels) != 0) {
+    string <- factor(string, levels = levels)
   } else {
-    champ_factor <- as.factor(champ_factor)
+    string <- as.factor(string)
   }
 
-  return(champ_factor)
+  return(string)
 }
