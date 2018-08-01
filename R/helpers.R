@@ -1,3 +1,26 @@
+#' Filter a correspondance table according to additional colmuns within the table.
+#'
+#' @param data A rename or recode data frame.
+#' @param source A first filter with the source colname.
+#' @param filtre A second filter with the filtre colname.
+#'
+#' @return A filtered data frame.
+#'
+#' @export
+filter_data_patch <- function(data, source = NULL, filtre = NULL) {
+
+  if (!is.null(source)) {
+    data <- dplyr::filter(data, source %in% !!source)
+  }
+
+  if (!is.null(filtre)) {
+    data <- tidyr::separate_rows(data, filtre, sep = ";") %>%
+      dplyr::filter(filtre == !!filtre | is.na(filtre))
+  }
+
+  return(data)
+}
+
 #' Supprime les doublons d'une table selon un champ
 #'
 #' Supprime les doublons d'une table selon un champ.
