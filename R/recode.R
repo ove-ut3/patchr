@@ -12,12 +12,8 @@
 #' @export
 recode_id <- function(data, data_recode, colname_id) {
 
-  if (!is.null(source)) {
-    data_recode <- dplyr::filter(data_recode, source %in% !!source)
-  }
-
-  data_recode <- dplyr::filter(data_recode, champ %in% names(data)) %>%
-    dplyr::select(!!colname_id, champ, .valeur = valeur)
+  data_recode <- dplyr::filter(data_recode, colname %in% names(data)) %>%
+    dplyr::select(!!colname_id, colname, .value = value)
 
   if (dplyr::inner_join(data, data_recode, by = colname_id) %>% nrow() == 0) {
     return(data)
@@ -27,8 +23,8 @@ recode_id <- function(data, data_recode, colname_id) {
 
   options(warn = -1)
   id_na <- dplyr::select(data, !!colname_id, .id) %>%
-    tidyr::gather("champ", "valeur", -.id) %>%
-    dplyr::filter(is.na(valeur)) %>%
+    tidyr::gather("colname", "value", -.id) %>%
+    dplyr::filter(is.na(value)) %>%
     dplyr::select(.id) %>%
     unique()
   options(warn = 0)
@@ -51,7 +47,7 @@ recode_id <- function(data, data_recode, colname_id) {
     data <- dplyr::select(data, -which(purrr::map_lgl(data, ~ any(class(.) == "POSIXct"))))
   }
 
-  data_transcode <- dplyr::tibble(champ = names(data),
+  data_transcode <- dplyr::tibble(colname = names(data),
                                class = purrr::map_chr(data, class) %>% tolower())
 
   if (any(lapply(data, class) == "Date")) {
@@ -59,13 +55,13 @@ recode_id <- function(data, data_recode, colname_id) {
       dplyr::mutate_at(.vars = names(.)[which(purrr::map_lgl(., lubridate::is.Date))], as.character)
   }
 
-  recode <- tidyr::gather(data, "champ", "valeur", -!!colname_id) %>%
-    dplyr::left_join(data_recode, by = c(colname_id, "champ")) %>%
-    dplyr::mutate(valeur = ifelse(!is.na(.valeur), .valeur, valeur),
-                  valeur = dplyr::na_if(valeur, "[null]")) %>%
-    dplyr::select(!!colname_id, champ, valeur) %>%
+  recode <- tidyr::gather(data, "colname", "value", -!!colname_id) %>%
+    dplyr::left_join(data_recode, by = c(colname_id, "colname")) %>%
+    dplyr::mutate(value = ifelse(!is.na(.value), .value, value),
+                  value = dplyr::na_if(value, "[null]")) %>%
+    dplyr::select(!!colname_id, colname, value) %>%
     unique() %>% # In case of multiple answer field
-    tidyr::spread(champ, valeur)
+    tidyr::spread(colname, value)
 
   recode <- patchr::transcode(recode, data_transcode)
 
