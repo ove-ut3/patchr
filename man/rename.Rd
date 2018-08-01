@@ -17,7 +17,7 @@ rename(data, data_rename, drop = TRUE)
 A renamed data frame.
 }
 \description{
-The correspondance table data_remane must at least contains tow columns : column for the old colnames and rename for the new colnames.
+The correspondance table data_remane must at least contains tow columns : \code{column} for the old colnames and \code{rename} for the new colnames.
 }
 \examples{
 dplyr::tibble(var1 = "a", old = "b") \%>\%

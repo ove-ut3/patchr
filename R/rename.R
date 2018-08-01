@@ -1,6 +1,6 @@
 #' Rename data frame column names according to a correspondance table.
 #'
-#' The correspondance table data_remane must at least contains tow columns : column for the old colnames and rename for the new colnames.
+#' The correspondance table data_remane must at least contains tow columns : \code{column} for the old colnames and \code{rename} for the new colnames.
 #'
 #' @param data A data frame.
 #' @param data_rename A correspondance table between old and new column names.
