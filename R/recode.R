@@ -1,87 +1,87 @@
-#' Recoder les champs d'une table a partir d'un identifiant d'individu
+#' Recode individual rows in a data frame.
 #'
-#' Recoder les champs d'une table à partir d'un identifiant d'individu.
+#' The data frame is recoded according to a correspondance table containing a row id.\cr
+#' The correpondance table contains a least three columns : colname, value and an identification colname named with colname_id.
 #'
-#' @param table La table à recoder.
-#' @param table_recodage La table de recodage.
-#' @param source Nom de la source à filtrer dans la table \code{table_recodage}.
-#' @param .champ_id Le nom du champ contenant l'identifiant de l'individu.
+#' @param data A data frame.
+#' @param data_recode The correspondance table.
+#' @param colname_id The identification colname in both data and data_recode tables.
 #'
-#' @return La table recodée
+#' @return A recoded data frame.
 #'
 #' @export
-recoder_individu <- function(table, table_recodage, source = NULL, .champ_id = "code_etudiant") {
+recode_id <- function(data, data_recode, colname_id) {
 
   if (!is.null(source)) {
-    table_recodage <- dplyr::filter(table_recodage, source %in% !!source)
+    data_recode <- dplyr::filter(data_recode, source %in% !!source)
   }
 
-  table_recodage <- dplyr::filter(table_recodage, champ %in% names(table)) %>%
-    dplyr::select(!!.champ_id, champ, .valeur = valeur)
+  data_recode <- dplyr::filter(data_recode, champ %in% names(data)) %>%
+    dplyr::select(!!colname_id, champ, .valeur = valeur)
 
-  if (dplyr::inner_join(table, table_recodage, by = .champ_id) %>% nrow() == 0) {
-    return(table)
+  if (dplyr::inner_join(data, data_recode, by = colname_id) %>% nrow() == 0) {
+    return(data)
   }
 
-  table <- dplyr::mutate(table, .id = dplyr::row_number())
+  data <- dplyr::mutate(data, .id = dplyr::row_number())
 
   options(warn = -1)
-  id_na <- dplyr::select(table, !!.champ_id, .id) %>%
+  id_na <- dplyr::select(data, !!colname_id, .id) %>%
     tidyr::gather("champ", "valeur", -.id) %>%
     dplyr::filter(is.na(valeur)) %>%
     dplyr::select(.id) %>%
     unique()
   options(warn = 0)
 
-  table_id_na <- dplyr::semi_join(table, id_na, by = ".id") %>%
+  data_id_na <- dplyr::semi_join(data, id_na, by = ".id") %>%
     dplyr::select(-.id)
 
-  table <- dplyr::anti_join(table, id_na, by = ".id") %>%
+  data <- dplyr::anti_join(data, id_na, by = ".id") %>%
     dplyr::select(-.id)
 
-  ordre_champs <- names(table)
+  col_order <- names(data)
 
-  if (any(lapply(table, class) == "list")) {
-    champs_list <- dplyr::select(table, !!.champ_id, which(purrr::map_lgl(table, is.list)))
-    table <- dplyr::select(table, -which(purrr::map_lgl(table, is.list)))
+  if (any(lapply(data, class) == "list")) {
+    col_list <- dplyr::select(data, !!colname_id, which(purrr::map_lgl(data, is.list)))
+    data <- dplyr::select(data, -which(purrr::map_lgl(data, is.list)))
   }
 
-  if (any(purrr::map_lgl(table, ~ any(class(.) == "POSIXct")))) {
-    champs_posix <- dplyr::select(table, !!.champ_id, which(purrr::map_lgl(table, ~ any(class(.) == "POSIXct"))))
-    table <- dplyr::select(table, -which(purrr::map_lgl(table, ~ any(class(.) == "POSIXct"))))
+  if (any(purrr::map_lgl(data, ~ any(class(.) == "POSIXct")))) {
+    col_posix <- dplyr::select(data, !!colname_id, which(purrr::map_lgl(data, ~ any(class(.) == "POSIXct"))))
+    data <- dplyr::select(data, -which(purrr::map_lgl(data, ~ any(class(.) == "POSIXct"))))
   }
 
-  content_maj <- dplyr::tibble(champ = names(table),
-                               classe = purrr::map_chr(table, class) %>% tolower())
+  data_transcode <- dplyr::tibble(champ = names(data),
+                               class = purrr::map_chr(data, class) %>% tolower())
 
-  if (any(lapply(table, class) == "Date")) {
-    table <- table %>%
+  if (any(lapply(data, class) == "Date")) {
+    data <- data %>%
       dplyr::mutate_at(.vars = names(.)[which(purrr::map_lgl(., lubridate::is.Date))], as.character)
   }
 
-  recoder <- tidyr::gather(table, "champ", "valeur", -!!.champ_id) %>%
-    dplyr::left_join(table_recodage, by = c(.champ_id, "champ")) %>%
+  recode <- tidyr::gather(data, "champ", "valeur", -!!colname_id) %>%
+    dplyr::left_join(data_recode, by = c(colname_id, "champ")) %>%
     dplyr::mutate(valeur = ifelse(!is.na(.valeur), .valeur, valeur),
                   valeur = dplyr::na_if(valeur, "[null]")) %>%
-    dplyr::select(!!.champ_id, champ, valeur) %>%
-    unique() %>% #En cas de question à choix multiple
+    dplyr::select(!!colname_id, champ, valeur) %>%
+    unique() %>% # In case of multiple answer field
     tidyr::spread(champ, valeur)
 
-  recoder <- patchr::transcoder_champs(recoder, content_maj)
+  recode <- patchr::transcode(recode, data_transcode)
 
-  if (exists("champs_list")) {
-    recoder <- dplyr::full_join(recoder, champs_list, by = .champ_id)
+  if (exists("col_list")) {
+    recode <- dplyr::full_join(recode, col_list, by = colname_id)
   }
 
-  if (exists("champs_posix")) {
-    recoder <- dplyr::full_join(recoder, champs_posix, by = .champ_id)
+  if (exists("col_posix")) {
+    recode <- dplyr::full_join(recode, col_posix, by = colname_id)
   }
 
-  recoder <- recoder %>%
-    dplyr::select(purrr::map_int(ordre_champs, ~ which(. == names(recoder)))) %>%
-    dplyr::bind_rows(table_id_na)
+  recode <- recode %>%
+    dplyr::select(purrr::map_int(col_order, ~ which(. == names(recode)))) %>%
+    dplyr::bind_rows(data_id_na)
 
-  return(recoder)
+  return(recode)
 }
 
 #' Recoder les champs d'une table a partir d'une expression VRAI/FAUX
