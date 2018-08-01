@@ -30,10 +30,10 @@ supprimer_doublons_champ <- function(table, champ) {
 #' data <- dplyr::tibble(cle1 = c("A", "A", "B", "B"), cle2 = c("1", "1", "2", "3"), champ = 1:4)
 #'
 #' # With duplicate
-#' divr::duplicate(data, cle1, cle2)
+#' patchr::duplicate(data, cle1, cle2)
 #'
 #' # Without duplicate
-#' divr::duplicate(data, cle1, cle2, champ))
+#' patchr::duplicate(data, cle1, cle2, champ))
 #'
 #' @export
 duplicate <- function(data, ...){
@@ -63,9 +63,9 @@ duplicate <- function(data, ...){
 #' @return A patched vector.
 #'
 #' @examples
-#' divr::patch_vector(c(1, NA_real_, 3), c(4, 5, 6))
-#' divr::patch_vector(c(1, NA_real_, 3), c(4, 5, 6), only_na = TRUE)
-#' divr::patch_vector(c(1, NA_real_, 3), 4)
+#' patchr::patch_vector(c(1, NA_real_, 3), c(4, 5, 6))
+#' patchr::patch_vector(c(1, NA_real_, 3), c(4, 5, 6), only_na = TRUE)
+#' patchr::patch_vector(c(1, NA_real_, 3), 4)
 #'
 #' @export
 patch_vector <- function(current, target, only_na = FALSE){

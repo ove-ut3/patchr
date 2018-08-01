@@ -20,8 +20,8 @@ A patched vector.
 Patch a current vector from a target vector.
 }
 \examples{
-divr::patch_vector(c(1, NA_real_, 3), c(4, 5, 6))
-divr::patch_vector(c(1, NA_real_, 3), c(4, 5, 6), only_na = TRUE)
-divr::patch_vector(c(1, NA_real_, 3), 4)
+patchr::patch_vector(c(1, NA_real_, 3), c(4, 5, 6))
+patchr::patch_vector(c(1, NA_real_, 3), c(4, 5, 6), only_na = TRUE)
+patchr::patch_vector(c(1, NA_real_, 3), 4)
 
 }
