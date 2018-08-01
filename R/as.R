@@ -39,39 +39,47 @@ as_numeric <- function(x) {
 
 }
 
-#' Transcode un vecteur vers un type integer
+#' Transcode a vector into integer.
 #'
-#' Transcode un vecteur vers un type integer
+#' @param x A vector.
 #'
-#' @param vecteur Un vecteur.
-#'
-#' @return Un vecteur de type integer
+#' @return An integer vector.
 #'
 #' @export
-to_integer <- function(vecteur) {
+as_integer <- function(x) {
 
-  if (all(is.na(vecteur))) {
-    to_integer <- as.numeric(vecteur)
+  if (all(is.na(x))) {
+    return(as.numeric(x))
+  }
 
-  } else if (any(class(vecteur) %in% c("character", "factor")) == TRUE) {
-    to_integer <- stringr::str_match(vecteur, "^(\\d+)") %>%
+  if (any(class(x) %in% c("character", "factor")) == TRUE) {
+
+    as_integer <- stringr::str_match(x, "^(\\d+)") %>%
       .[, 2] %>%
       as.integer()
 
-  } else if (any(class(vecteur) %in% c("Date", "POSIXct")) == TRUE) {
-    to_integer <- lubridate::year(vecteur) %>%
-      as.integer()
-
-  } else if (any(class(vecteur) == "logical") == TRUE) {
-    to_integer <- rep(NA, length(vecteur)) %>%
-      as.integer()
-
-  } else if (any(class(vecteur) == "numeric") == TRUE) {
-    to_integer <- as.integer(vecteur)
-
+    return(as_integer)
   }
 
-  return(to_integer)
+  if (any(class(x) %in% c("Date", "POSIXct")) == TRUE) {
+
+    as_integer <- lubridate::year(x) %>%
+      as.integer()
+
+    return(as_integer)
+  }
+
+  if (any(class(x) == "logical") == TRUE) {
+
+    as_integer <- rep(NA, length(x)) %>%
+      as.integer()
+
+    return(as_integer)
+  }
+
+  if (any(class(x) == "numeric") == TRUE) {
+    return(as.integer(x))
+  }
 }
 
 #' Transcode un vecteur vers un type date
