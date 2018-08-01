@@ -15,3 +15,4 @@ An integer vector.
 \description{
 Transcode a vector into integer.
 }
+\keyword{internal}

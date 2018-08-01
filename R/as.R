@@ -46,6 +46,7 @@ as_numeric <- function(x) {
 #' @return An integer vector.
 #'
 #' @export
+#' @keywords internal
 as_integer <- function(x) {
 
   if (all(is.na(x))) {
@@ -89,6 +90,7 @@ as_integer <- function(x) {
 #' @return A date vector.
 #'
 #' @export
+#' @keywords internal
 as_date <- function(x, origin = "1899-12-30") {
 
   as_date <- as.Date(rep(NA, length(x)))

@@ -15,3 +15,4 @@ A date vector.
 \description{
 Transcode a vector into date.
 }
+\keyword{internal}
