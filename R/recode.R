@@ -1,28 +1,28 @@
 #' Recode individual rows in a data frame.
 #'
 #' The data frame is recoded according to a correspondance table containing a row id.\cr
-#' The correpondance table contains a least three columns : colname, value and an identification colname named with colname_id.
+#' The correpondance table contains a least three columns : colname, value and an identification colname named with colnames_id.
 #'
 #' @param data A data frame.
 #' @param data_recode The correspondance table.
-#' @param colname_id The identification colname in both data and data_recode tables.
+#' @param colnames_id The identification colnames in both data and data_recode tables.
 #'
 #' @return A recoded data frame.
 #'
 #' @export
-recode_id <- function(data, data_recode, colname_id) {
+recode_id <- function(data, data_recode, colnames_id) {
 
   data_recode <- dplyr::filter(data_recode, colname %in% names(data)) %>%
-    dplyr::select(!!colname_id, colname, .value = value)
+    dplyr::select(!!colnames_id, colname, .value = value)
 
-  if (dplyr::inner_join(data, data_recode, by = colname_id) %>% nrow() == 0) {
+  if (dplyr::inner_join(data, data_recode, by = colnames_id) %>% nrow() == 0) {
     return(data)
   }
 
   data <- dplyr::mutate(data, .id = dplyr::row_number())
 
   options(warn = -1)
-  id_na <- dplyr::select(data, !!colname_id, .id) %>%
+  id_na <- dplyr::select(data, !!colnames_id, .id) %>%
     tidyr::gather("colname", "value", -.id) %>%
     dplyr::filter(is.na(value)) %>%
     dplyr::select(.id) %>%
@@ -38,12 +38,12 @@ recode_id <- function(data, data_recode, colname_id) {
   col_order <- names(data)
 
   if (any(lapply(data, class) == "list")) {
-    col_list <- dplyr::select(data, !!colname_id, which(purrr::map_lgl(data, is.list)))
+    col_list <- dplyr::select(data, !!colnames_id, which(purrr::map_lgl(data, is.list)))
     data <- dplyr::select(data, -which(purrr::map_lgl(data, is.list)))
   }
 
   if (any(purrr::map_lgl(data, ~ any(class(.) == "POSIXct")))) {
-    col_posix <- dplyr::select(data, !!colname_id, which(purrr::map_lgl(data, ~ any(class(.) == "POSIXct"))))
+    col_posix <- dplyr::select(data, !!colnames_id, which(purrr::map_lgl(data, ~ any(class(.) == "POSIXct"))))
     data <- dplyr::select(data, -which(purrr::map_lgl(data, ~ any(class(.) == "POSIXct"))))
   }
 
@@ -55,22 +55,22 @@ recode_id <- function(data, data_recode, colname_id) {
       dplyr::mutate_at(.vars = names(.)[which(purrr::map_lgl(., lubridate::is.Date))], as.character)
   }
 
-  recode <- tidyr::gather(data, "colname", "value", -!!colname_id) %>%
-    dplyr::left_join(data_recode, by = c(colname_id, "colname")) %>%
+  recode <- tidyr::gather(data, "colname", "value", -!!colnames_id) %>%
+    dplyr::left_join(data_recode, by = c(colnames_id, "colname")) %>%
     dplyr::mutate(value = ifelse(!is.na(.value), .value, value),
                   value = dplyr::na_if(value, "[null]")) %>%
-    dplyr::select(!!colname_id, colname, value) %>%
+    dplyr::select(!!colnames_id, colname, value) %>%
     unique() %>% # In case of multiple answer field
     tidyr::spread(colname, value)
 
   recode <- patchr::transcode(recode, data_transcode)
 
   if (exists("col_list")) {
-    recode <- dplyr::full_join(recode, col_list, by = colname_id)
+    recode <- dplyr::full_join(recode, col_list, by = colnames_id)
   }
 
   if (exists("col_posix")) {
-    recode <- dplyr::full_join(recode, col_posix, by = colname_id)
+    recode <- dplyr::full_join(recode, col_posix, by = colnames_id)
   }
 
   recode <- recode %>%
