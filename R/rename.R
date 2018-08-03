@@ -33,6 +33,7 @@ normalise_colnames <- function(data){
 #'
 #' @param data A data frame.
 #' @param data_rename A correspondance table between old and new column names.
+#' @param normalise_data_colnames If \code{TRUE} then all the data column names are normalised.
 #' @param drop If \code{TRUE} then all the columns not present in data_rename are removed.
 #'
 #' @return A renamed data frame.
@@ -42,10 +43,14 @@ normalise_colnames <- function(data){
 #'   patchr::rename(dplyr::tibble(column = "old", rename = "new"), drop = FALSE)
 #'
 #' @export
-rename <- function(data, data_rename, drop = TRUE) {
+rename <- function(data, data_rename, normalise_data_colnames = FALSE, drop = TRUE) {
 
   if (any(class(data) == "data.frame") == FALSE) {
     return(data)
+  }
+
+  if (normalise_data_colnames) {
+    data <- patchr::normalise_colnames(data)
   }
 
   new_colnames <- dplyr::tibble(column = colnames(data)) %>%
