@@ -1,3 +1,28 @@
+#' Replace empty character with NA in a data frame.
+#'
+#' @param data A data frame.
+#'
+#' @return A data frame without empty character.
+#'
+#' @examples
+#' data <- dplyr::tibble(
+#'   champ_1 = "",
+#'   champ_2 = ""
+#' )
+#' patchr::replace_empty_to_na(data)
+#'
+#' @export
+replace_empty_to_na <- function(data){
+
+  if (nrow(data) == 0) {
+    return(data)
+  }
+
+  data <- dplyr::mutate_if(data, is.character, caractr::str_empty_to_na)
+
+  return(data)
+}
+
 #' Filter a correspondance table according to additional colmuns within the table.
 #'
 #' @param data A rename or recode data frame.
