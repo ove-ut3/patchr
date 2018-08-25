@@ -183,17 +183,17 @@ recode_factor <- function(data, data_recode, data_levels = NULL, new_vars = FALS
 
   if (nrow(data) == 0) return(data)
 
-  if (nrow(data_recode) == 0) return(table)
+  if (nrow(data_recode) == 0) return(data)
 
   if (new_vars == TRUE) {
 
     new_columns <- c(data_recode$column, data_levels$column) %>%
       unique() %>%
-      .[which(!. %in% names(table))]
+      .[which(!. %in% names(data))]
 
     if (length(new_columns) >= 1) {
 
-      table <- table %>%
+      data <- data %>%
         patchr::recode_formula(data_recode = dplyr::tibble(column = new_columns,
                                                            value = "NA_character_",
                                                            expression = NA_character_))
@@ -201,30 +201,30 @@ recode_factor <- function(data, data_recode, data_levels = NULL, new_vars = FALS
 
   }
 
-  if (intersect(names(table), data_recode$column) %>% length() == 0) {
-    return(table)
+  if (intersect(names(data), data_recode$column) %>% length() == 0) {
+    return(data)
   }
 
-  cols_factor <- names(table) %>%
+  cols_factor <- names(data) %>%
     intersect(c(data_recode$column, data_levels$column))
 
-  cols_order <- names(table)
+  cols_order <- names(data)
 
-  recode <- table %>%
+  recode <- data %>%
     dplyr::mutate(.id = dplyr::row_number()) %>%
     dplyr::select(.id, cols_factor) %>%
     dplyr::mutate_at(dplyr::vars(cols_factor), as.character) %>%
     tidyr::gather("column", "value", -.id) %>%
     dplyr::left_join(data_recode %>%
-                       dplyr::select(column, value, recodage),
+                       dplyr::select(column, value, factor),
                      by = c("column", "value")) %>%
-    dplyr::mutate(value = ifelse(!is.na(recodage), recodage, value) %>%
+    dplyr::mutate(value = ifelse(!is.na(factor), factor, value) %>%
                     dplyr::na_if("[null]")) %>%
-    dplyr::select(-recodage) %>%
+    dplyr::select(-factor) %>%
     tidyr::spread(column, value) %>%
     dplyr::select(-.id) %>%
     dplyr::mutate_at(dplyr::vars(cols_factor), patchr::as_factor, data_levels) %>%
-    dplyr::bind_cols(table %>%
+    dplyr::bind_cols(data %>%
                        dplyr::select(which(!names(.) %in% cols_factor)))
 
   recode <- recode %>%

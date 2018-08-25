@@ -167,7 +167,7 @@ as_factor <- function(string, data_levels = NULL) {
 
   levels <- data_levels %>%
     dplyr::filter(column == !!column) %>%
-    dplyr::arrange(ordre) %>%
+    dplyr::arrange(order) %>%
     dplyr::pull(level)
 
   if (length(levels) != 0) {
