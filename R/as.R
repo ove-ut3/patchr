@@ -139,6 +139,9 @@ as_date <- function(x, origin = "1899-12-30") {
     return(as.Date.POSIXct(x))
   }
 
+  if (any(class(x) == "logical") == TRUE) {
+    return(as_date)
+  }
 }
 
 #' Transcode a character vector into an factor.
