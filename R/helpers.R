@@ -26,8 +26,8 @@ replace_empty_to_na <- function(data){
 #' Filter a correspondance table according to additional colmuns within the table.
 #'
 #' @param data A rename or recode data frame.
-#' @param source A first filter with the source colname.
-#' @param filtre A second filter with the filtre colname.
+#' @param source A first filter with the source column name.
+#' @param filtre A second filter with the filtre column name.
 #'
 #' @return A filtered data frame.
 #'
@@ -46,20 +46,20 @@ filter_data_patch <- function(data, source = NULL, filtre = NULL) {
   return(data)
 }
 
-#' Remove duplicate rows from a table according a colname.
+#' Remove duplicate rows from a table according a column name.
 #'
 #' @param data A data frame.
-#' @param colname A column name for which duplicate rows are removed.
+#' @param var A variable for which duplicate rows are removed.
 #'
-#' @return A data frame with no duplicate for colname.
+#' @return A data frame with no duplicate for column name.
 #'
 #' @export
-remove_duplicate <- function(data, colname) {
+remove_duplicate <- function(data, var) {
 
-  quo_colname <- dplyr::enquo(colname)
+  quo_var <- dplyr::enquo(var)
 
-  remove_duplicate <- tidyr::nest(data, !!quo_colname) %>%
-    dplyr::mutate(!!dplyr::quo_name(quo_colname) := purrr::map_chr(data, ~ ifelse(length(.[[1]]) == 1, .[[1]], NA_character_))) %>%
+  remove_duplicate <- tidyr::nest(data, !!quo_var) %>%
+    dplyr::mutate(!!dplyr::quo_name(quo_var) := purrr::map_chr(data, ~ ifelse(length(.[[1]]) == 1, .[[1]], NA_character_))) %>%
     dplyr::select(-data)
 
   return(remove_duplicate)

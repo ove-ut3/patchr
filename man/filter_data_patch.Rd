@@ -9,9 +9,9 @@ filter_data_patch(data, source = NULL, filtre = NULL)
 \arguments{
 \item{data}{A rename or recode data frame.}
 
-\item{source}{A first filter with the source colname.}
+\item{source}{A first filter with the source column name.}
 
-\item{filtre}{A second filter with the filtre colname.}
+\item{filtre}{A second filter with the filtre column name.}
 }
 \value{
 A filtered data frame.

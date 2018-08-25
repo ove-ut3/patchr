@@ -4,19 +4,19 @@
 \alias{recode_id}
 \title{Recode individual rows in a data frame.}
 \usage{
-recode_id(data, data_recode, colnames_id)
+recode_id(data, data_recode, vars_id)
 }
 \arguments{
 \item{data}{A data frame.}
 
 \item{data_recode}{The correspondance table.}
 
-\item{colnames_id}{The identification colnames in both data and data_recode tables.}
+\item{vars_id}{The identification variables in both data and data_recode tables.}
 }
 \value{
 A recoded data frame.
 }
 \description{
 The data frame is recoded according to a correspondance table containing a row id.\cr
-The correpondance table contains a least three columns : colname, value and an identification colname named with colnames_id.
+The correpondance table contains a least three fields : \code{column}, \code{value} and at least one id variable named with vars_id.
 }

@@ -4,33 +4,33 @@
 \alias{recode_formula}
 \title{Recode a data frame with formulas.}
 \usage{
-recode_formula(data, data_recode, new_cols = TRUE)
+recode_formula(data, data_recode, new_vars = TRUE)
 }
 \arguments{
 \item{data}{A data frame.}
 
 \item{data_recode}{The correspondance table containing formulas.}
 
-\item{new_cols}{If \code{TRUE} then it computes all colnames referenced in data_recode, not only colnames in data at the first place.}
+\item{new_vars}{If \code{TRUE} then it computes all variables referenced in data_recode, not only variables in data at the first place.}
 }
 \value{
 A recoded data frame.
 }
 \description{
 The data frame is recoded according to a correspondance table containing formulas.\cr
-The correpondance table contains a least three columns : expression, colname and value.
+The correpondance table contains a least three fields : \code{expression}, \code{column} and \code{value}.
 }
 \examples{
 # Recode without expression
 patchr::recode_formula(
 data = dplyr::tibble(test = 1L),
-data_recode = dplyr::tibble(expression = NA_character_, colname = "test", value = "2L")
+data_recode = dplyr::tibble(expression = NA_character_, column = "test", value = "2L")
 )
 
 # Recode with expression
 patchr::recode_formula(
 data = dplyr::tibble(test = c(1L, 2L)),
-data_recode = dplyr::tibble(expression = "test == 2", colname = "test", value = "3L")
+data_recode = dplyr::tibble(expression = "test == 2", column = "test", value = "3L")
 )
 
 }

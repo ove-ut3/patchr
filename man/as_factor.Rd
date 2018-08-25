@@ -9,12 +9,12 @@ as_factor(string, data_levels = NULL)
 \arguments{
 \item{string}{A character vector.}
 
-\item{data_levels}{An optional correpondance table between colnames and ordered levels.}
+\item{data_levels}{An optional correpondance table between column names and ordered levels.}
 }
 \value{
 A ordered leveled factor.
 }
 \description{
-An optional table data_levels contains ordered levels a colname. It contains at least three colmuns : colname, order, level.
+An optional table data_levels contains ordered levels associated with column names. It contains at least three colmuns : column, order, level.
 }
 \keyword{internal}

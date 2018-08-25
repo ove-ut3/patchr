@@ -16,7 +16,7 @@ A transcoded data frame.
 }
 \description{
 The data frame columns are transcoded according to a correspondance table.\cr
-The correspondance table data_transcode must at least contains tow columns : \code{column} for the colname and \code{class} for the new R class.
+The correspondance table data_transcode must at least contains tow fields : \code{column} for the column name and \code{class} for the new R class.
 }
 \examples{
 dplyr::tibble(var1 = "a", var2 = 1) \%>\%

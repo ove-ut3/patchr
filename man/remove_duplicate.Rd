@@ -2,18 +2,18 @@
 % Please edit documentation in R/helpers.R
 \name{remove_duplicate}
 \alias{remove_duplicate}
-\title{Remove duplicate rows from a table according a colname.}
+\title{Remove duplicate rows from a table according a column name.}
 \usage{
-remove_duplicate(data, colname)
+remove_duplicate(data, var)
 }
 \arguments{
 \item{data}{A data frame.}
 
-\item{colname}{A column name for which duplicate rows are removed.}
+\item{var}{A variable for which duplicate rows are removed.}
 }
 \value{
-A data frame with no duplicate for colname.
+A data frame with no duplicate for column name.
 }
 \description{
-Remove duplicate rows from a table according a colname.
+Remove duplicate rows from a table according a column name.
 }

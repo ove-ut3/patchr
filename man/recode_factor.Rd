@@ -4,22 +4,22 @@
 \alias{recode_factor}
 \title{Recode columns to factor in a data frame.}
 \usage{
-recode_factor(data, data_recode, data_levels = NULL, new_cols = FALSE)
+recode_factor(data, data_recode, data_levels = NULL, new_vars = FALSE)
 }
 \arguments{
 \item{data}{A data frame.}
 
 \item{data_recode}{A correspondance table containing between character values and unordered level factors.}
 
-\item{data_levels}{An optional correpondance table between colnames and ordered levels.}
+\item{data_levels}{An optional correpondance table between column names and ordered levels.}
 
-\item{new_cols}{If \code{TRUE} then it computes all colnames referenced in data_recode, not only colnames in data at the first place.}
+\item{new_vars}{If \code{TRUE} then it computes all variables referenced in data_recode, not only variables in data at the first place.}
 }
 \value{
 A recoded data frame.
 }
 \description{
 The data frame is recoded according to a correspondance table.\cr
-The correpondance table contains a least three columns : colname, value and factor.\cr
-An optional table data_levels contains ordered levels for each colname. It contains at least three colmuns : colname, order, level.
+The correpondance table contains a least three columns : \code{column}, \code{value} and \code{factor}.\cr
+An optional table data_levels contains ordered levels for each column. It contains at least three fields : \code{column}, \code{order}, \code{level}.
 }

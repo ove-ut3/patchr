@@ -29,7 +29,7 @@ normalise_colnames <- function(data){
 #' Rename data frame columns.
 #'
 #' The data frame columns are renamed according to a correspondance table.\cr
-#' The correspondance table data_remane must at least contains tow columns : \code{column} for the old colnames and \code{rename} for the new colnames.
+#' The correspondance table data_remane must at least contains tow columns : \code{column} for the old column names and \code{rename} for the new column names.
 #'
 #' @param data A data frame.
 #' @param data_rename A correspondance table between old and new column names.
@@ -49,7 +49,7 @@ rename <- function(data, data_rename, normalise_data_colnames = TRUE, drop = TRU
     return(data)
   }
 
-  if (normalise_data_colnames & colnames(data) != caractr::str_normalise_colnames(data)) {
+  if (normalise_data_colnames & any(colnames(data) != caractr::str_normalise_colnames(colnames(data)))) {
     data <- patchr::normalise_colnames(data)
   }
 

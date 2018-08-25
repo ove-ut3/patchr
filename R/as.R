@@ -146,10 +146,10 @@ as_date <- function(x, origin = "1899-12-30") {
 
 #' Transcode a character vector into an factor.
 #'
-#' An optional table data_levels contains ordered levels a colname. It contains at least three colmuns : colname, order, level.
+#' An optional table data_levels contains ordered levels associated with column names. It contains at least three colmuns : column, order, level.
 #'
 #' @param string A character vector.
-#' @param data_levels An optional correpondance table between colnames and ordered levels.
+#' @param data_levels An optional correpondance table between column names and ordered levels.
 #'
 #' @return A ordered leveled factor.
 #'
@@ -162,11 +162,11 @@ as_factor <- function(string, data_levels = NULL) {
     return(string)
   }
 
-  colname <- dplyr::enquo(string) %>%
+  column <- dplyr::enquo(string) %>%
     dplyr::quo_name()
 
   levels <- data_levels %>%
-    dplyr::filter(colname == !!colname) %>%
+    dplyr::filter(column == !!column) %>%
     dplyr::arrange(ordre) %>%
     dplyr::pull(level)
 

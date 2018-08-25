@@ -1,7 +1,7 @@
 #' Change column classes in a data frame.
 #'
 #' The data frame columns are transcoded according to a correspondance table.\cr
-#' The correspondance table data_transcode must at least contains tow columns : \code{column} for the colname and \code{class} for the new R class.
+#' The correspondance table data_transcode must at least contains tow fields : \code{column} for the column name and \code{class} for the new R class.
 #'
 #' @param data A data frame.
 #' @param data_transcode A correspondance between colmanes and new R classes.
