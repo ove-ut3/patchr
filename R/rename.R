@@ -45,7 +45,7 @@ normalise_colnames <- function(data){
 #' @export
 rename <- function(data, data_rename, normalise_data_colnames = TRUE, drop = TRUE) {
 
-  if (any(class(data) == "data.frame") == FALSE) {
+  if (any(class(data) == "data.frame") & any(class(data_rename) == "data.frame") == FALSE) {
     return(data)
   }
 
