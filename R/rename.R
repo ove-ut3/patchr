@@ -33,7 +33,7 @@ normalise_colnames <- function(data){
 #'
 #' @param data A data frame.
 #' @param data_rename A correspondance table between old and new column names.
-#' @param normalise_data_colnames If \code{TRUE} then all the data column names are normalised.
+#' @param normalise_data_colnames If \code{TRUE} then input data column names are normalised before renamed according to data_rename.
 #' @param drop If \code{TRUE} then all the columns not present in data_rename are removed.
 #'
 #' @return A renamed data frame.

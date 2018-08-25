@@ -11,7 +11,7 @@ rename(data, data_rename, normalise_data_colnames = TRUE, drop = TRUE)
 
 \item{data_rename}{A correspondance table between old and new column names.}
 
-\item{normalise_data_colnames}{If \code{TRUE} then all the data column names are normalised.}
+\item{normalise_data_colnames}{If \code{TRUE} then input data column names are normalised before renamed according to data_rename.}
 
 \item{drop}{If \code{TRUE} then all the columns not present in data_rename are removed.}
 }
