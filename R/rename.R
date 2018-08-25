@@ -63,8 +63,8 @@ rename <- function(data, data_rename, normalise_data_colnames = TRUE, drop = TRU
       data <- dplyr::select(data, -which(is.na(new_colnames$rename)))
       new_colnames <- dplyr::filter(new_colnames, !is.na(rename))
     }
-  } else if (drop == FALSE){
-    new_colnames <- dplyr::mutate(new_colnames, rename = ifelse(!is.na(rename), rename, caractr::str_camel_to_snake_case(column)))
+  } else if (drop == FALSE) {
+    new_colnames <- dplyr::mutate(new_colnames, rename = ifelse(!is.na(rename), rename, column))
   }
 
   new_colnames <- new_colnames[["rename"]]
