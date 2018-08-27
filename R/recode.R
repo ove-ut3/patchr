@@ -223,7 +223,7 @@ recode_factor <- function(data, data_recode, data_levels = NULL, new_vars = FALS
     dplyr::select(-factor) %>%
     tidyr::spread(column, value) %>%
     dplyr::select(-.id) %>%
-    dplyr::mutate_at(dplyr::vars(cols_factor), patchr::as_factor, data_levels) %>%
+    dplyr::mutate_at(dplyr::vars(cols_factor), as_factor, data_levels) %>%
     dplyr::bind_cols(data %>%
                        dplyr::select(which(!names(.) %in% cols_factor)))
 
