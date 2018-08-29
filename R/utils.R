@@ -1,4 +1,3 @@
-#' @keywords internal
 as_numeric <- function(x) {
 
   if (all(is.na(x))) {
@@ -32,7 +31,6 @@ as_numeric <- function(x) {
 
 }
 
-#' @keywords internal
 as_integer <- function(x) {
 
   if (all(is.na(x))) {
@@ -69,7 +67,6 @@ as_integer <- function(x) {
   }
 }
 
-#' @keywords internal
 as_date <- function(x, origin = "1899-12-30") {
 
   as_date <- as.Date(rep(NA, length(x)))
@@ -123,7 +120,6 @@ as_date <- function(x, origin = "1899-12-30") {
   }
 }
 
-#' @keywords internal
 as_factor <- function(string, data_levels = NULL) {
 
   if (is.null(data_levels)) {
