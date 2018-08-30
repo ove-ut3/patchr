@@ -153,7 +153,7 @@ anti_join_bind <- function(x, y, by, arrange = TRUE) {
     dplyr::bind_rows(x, .)
 
   if (arrange == TRUE) {
-    anti_join_bind <- dplyr::arrange(anti_join_bind, !!!rlang::parse_quosure(by))
+    anti_join_bind <- dplyr::arrange(anti_join_bind, !!!purrr::map(by, rlang::parse_quosure))
   }
 
   return(anti_join_bind)
