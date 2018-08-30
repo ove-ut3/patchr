@@ -119,27 +119,3 @@ as_date <- function(x, origin = "1899-12-30") {
     return(as_date)
   }
 }
-
-as_factor <- function(string, data_levels = NULL) {
-
-  if (is.null(data_levels)) {
-    string <- as.factor(string)
-    return(string)
-  }
-
-  column <- dplyr::enquo(string) %>%
-    dplyr::quo_name()
-
-  levels <- data_levels %>%
-    dplyr::filter(column == !!column) %>%
-    dplyr::arrange(order) %>%
-    dplyr::pull(level)
-
-  if (length(levels) != 0) {
-    string <- factor(string, levels = levels)
-  } else {
-    string <- as.factor(string)
-  }
-
-  return(string)
-}
