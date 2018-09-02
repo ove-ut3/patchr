@@ -83,7 +83,7 @@ recode_id <- function(data, data_recode, vars_id) {
 #' Recode a data frame with formulas.
 #'
 #' The data frame is recoded according to a correspondance table containing formulas.\cr
-#' The correpondance table contains a least three fields : \code{expression}, \code{column} and \code{value}.
+#' The correpondance table contains a least three fields : \code{condition}, \code{column} and \code{value}.
 #'
 #' @param data A data frame.
 #' @param data_recode The correspondance table containing formulas.
@@ -92,16 +92,16 @@ recode_id <- function(data, data_recode, vars_id) {
 #' @return A recoded data frame.
 #'
 #' @examples
-#' # Recode without expression
+#' # Recode without condition
 #' patchr::recode_formula(
 #' data = dplyr::tibble(test = 1L),
-#' data_recode = dplyr::tibble(expression = NA_character_, column = "test", value = "2L")
+#' data_recode = dplyr::tibble(condition = NA_character_, column = "test", value = "2L")
 #' )
 #'
-#' # Recode with expression
+#' # Recode with condition
 #' patchr::recode_formula(
 #' data = dplyr::tibble(test = c(1L, 2L)),
-#' data_recode = dplyr::tibble(expression = "test == 2", column = "test", value = "3L")
+#' data_recode = dplyr::tibble(condition = "test == 2", column = "test", value = "3L")
 #' )
 #'
 #' @export
@@ -152,9 +152,9 @@ recode_formula <- function(data, data_recode, new_vars = TRUE) {
                                   paste0("factor(", value, ", levels = levels(", column,"))"),
                                   value))
 
-  list_mutate <- ifelse(is.na(data_recode$expression),
+  list_mutate <- ifelse(is.na(data_recode$condition),
                               data_recode$value,
-                              paste0("dplyr::if_else(", data_recode$expression, ", ", data_recode$value,", ", data_recode$column, ", ", data_recode$column, ")")) %>%
+                              paste0("dplyr::if_else(", data_recode$condition, ", ", data_recode$value,", ", data_recode$column, ", ", data_recode$column, ")")) %>%
     as.list()
 
   names(list_mutate) <- data_recode$column
@@ -196,7 +196,7 @@ recode_factor <- function(data, data_recode, data_levels = NULL, new_vars = FALS
       data <- data %>%
         patchr::recode_formula(data_recode = dplyr::tibble(column = new_columns,
                                                            value = "NA_character_",
-                                                           expression = NA_character_))
+                                                           condition = NA_character_))
     }
 
   }
@@ -223,7 +223,7 @@ recode_factor <- function(data, data_recode, data_levels = NULL, new_vars = FALS
     dplyr::select(-factor) %>%
     tidyr::spread(column, value) %>%
     dplyr::select(-.id) %>%
-    dplyr::mutate_at(dplyr::vars(cols_factor), as_factor, data_levels) %>%
+    dplyr::mutate_at(dplyr::vars(cols_factor), patchr::as_factor, data_levels) %>%
     dplyr::bind_cols(data %>%
                        dplyr::select(which(!names(.) %in% cols_factor)))
 

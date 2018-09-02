@@ -18,19 +18,19 @@ A recoded data frame.
 }
 \description{
 The data frame is recoded according to a correspondance table containing formulas.\cr
-The correpondance table contains a least three fields : \code{expression}, \code{column} and \code{value}.
+The correpondance table contains a least three fields : \code{condition}, \code{column} and \code{value}.
 }
 \examples{
-# Recode without expression
+# Recode without condition
 patchr::recode_formula(
 data = dplyr::tibble(test = 1L),
-data_recode = dplyr::tibble(expression = NA_character_, column = "test", value = "2L")
+data_recode = dplyr::tibble(condition = NA_character_, column = "test", value = "2L")
 )
 
-# Recode with expression
+# Recode with condition
 patchr::recode_formula(
 data = dplyr::tibble(test = c(1L, 2L)),
-data_recode = dplyr::tibble(expression = "test == 2", column = "test", value = "3L")
+data_recode = dplyr::tibble(condition = "test == 2", column = "test", value = "3L")
 )
 
 }
