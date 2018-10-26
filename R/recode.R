@@ -124,11 +124,15 @@ recode_formula <- function(data, data_recode, new_vars = TRUE) {
 
       list_mutate <- data_recode %>%
         dplyr::filter(column %in% new_columns) %>%
-        dplyr::mutate(class = "character",
-                      class = ifelse(stringr::str_detect(value, "^\\d+L$"), "integer", class),
-                      class = ifelse(value == "NA_integer_", "integer", class),
-                      class = ifelse(stringr::str_detect(value, "^[\\d\\.]+$"), "real", class),
-                      class = ifelse(value == "NA_real_", "real", class)) %>%
+        dplyr::mutate(class = dplyr::case_when(
+          stringr::str_detect(value, "^\\d+L$") ~ "integer",
+          stringr::str_detect(value, "^as\\.integer\\(") ~ "integer",
+          value == "NA_integer_"  ~ "integer",
+          stringr::str_detect(value, "^[\\d\\.]+$") ~ "real",
+          stringr::str_detect(value, "^as\\.numeric\\(") ~ "real",
+          value == "NA_real_"  ~ "real",
+          TRUE ~ "character")
+        ) %>%
         dplyr::select(column, class) %>%
         unique() %>%
         dplyr::pull(class) %>%
