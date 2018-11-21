@@ -12,6 +12,15 @@
 #' @export
 recode_id <- function(data, data_recode, vars_id) {
 
+  duplicate <- data %>%
+    dplyr::group_by_at(dplyr::vars(vars_id)) %>%
+    dplyr::filter(n() >= 2) %>%
+    dplyr::ungroup()
+
+  if (nrow(duplicate) >= 1) {
+    stop("Duplicates are in data according to vars_id arguments", call. = FALSE)
+  }
+
   data_recode <- dplyr::filter(data_recode, column %in% names(data)) %>%
     dplyr::select(!!vars_id, column, .value = value)
 
