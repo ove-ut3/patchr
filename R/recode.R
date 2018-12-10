@@ -219,6 +219,7 @@ recode_factor <- function(data, data_recode, data_levels = NULL, new_vars = FALS
   }
 
   cols_factor <- names(data) %>%
+    .[!purrr::map_lgl(data, ~ "list" %in% class(.))] %>%
     intersect(c(data_recode$column, data_levels$column))
 
   cols_order <- names(data)
