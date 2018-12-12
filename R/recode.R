@@ -167,7 +167,7 @@ recode_formula <- function(data, data_recode, new_vars = TRUE) {
 
   list_mutate <- ifelse(is.na(data_recode$condition),
                               data_recode$value,
-                              paste0("dplyr::if_else(", data_recode$condition, ", ", data_recode$value,", ", data_recode$column, ", ", data_recode$column, ")")) %>%
+                              paste0("dplyr::if_else(", data_recode$condition, ", ", data_recode$value,", `", data_recode$column, "`, `", data_recode$column, "`)")) %>%
     as.list()
 
   names(list_mutate) <- data_recode$column
