@@ -162,7 +162,7 @@ recode_formula <- function(data, data_recode, new_vars = TRUE) {
   data_recode <- data_recode %>%
     dplyr::mutate(classe = purrr::map(column, ~ class(data[[.]])),
                   value = ifelse(purrr::map_lgl(classe, ~ "factor" %in% .),
-                                  paste0("factor(", value, ", levels = levels(", column,"))"),
+                                  glue::glue("factor({value}, levels = levels({column}))"),
                                   value))
 
   list_mutate <- ifelse(is.na(data_recode$condition),
