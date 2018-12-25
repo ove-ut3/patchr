@@ -121,9 +121,9 @@ patch_vector <- function(current, target, only_na = FALSE){
   }
 
   if (length(current) != length(target)) {
-    stop(paste0("current and target vector must have the same length"), call. = FALSE)
+    stop("current and target vector must have the same length", call. = FALSE)
   } else if (class(current) != class(target)) {
-    stop(paste0("current and target vector must have the same class"), call. = FALSE)
+    stop("current and target vector must have the same class", call. = FALSE)
   }
 
   if (only_na == FALSE) {
