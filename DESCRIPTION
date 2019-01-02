@@ -8,12 +8,13 @@ Depends:
 License: Etalab
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 6.1.1
 Imports:
-    caractr,
     dplyr,
     lubridate,
     purrr,
     rlang,
     stringr,
     tidyr
-RoxygenNote: 6.1.1
+Remotes:
+    stephLH/caractr
