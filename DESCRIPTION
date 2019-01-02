@@ -16,5 +16,5 @@ Imports:
     stringr,
     tidyr
 Remotes:
-    stephLH/caractr
+    stephLH/caractr,
     stephLH/impexp
