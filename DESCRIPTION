@@ -13,7 +13,6 @@ Imports:
     dplyr,
     lubridate,
     purrr,
-    rlang,
     stringr,
     tidyr
 Remotes:
