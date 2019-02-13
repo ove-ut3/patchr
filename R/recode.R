@@ -149,7 +149,7 @@ recode_formula <- function(data, data_recode, new_vars = TRUE) {
         as.list()
 
       names(list_mutate) <- new_columns
-      list_mutate <- lapply(list_mutate, rlang::parse_quosure)
+      list_mutate <- lapply(list_mutate, rlang::parse_quo, env = rlang::caller_env())
 
       data <- dplyr::mutate(data, !!!list_mutate)
     }
@@ -171,7 +171,7 @@ recode_formula <- function(data, data_recode, new_vars = TRUE) {
     as.list()
 
   names(list_mutate) <- data_recode$column
-  list_mutate <- lapply(list_mutate, rlang::parse_quosure)
+  list_mutate <- lapply(list_mutate, rlang::parse_quo, env = rlang::caller_env())
 
   data <- dplyr::mutate(data, !!!list_mutate)
 
