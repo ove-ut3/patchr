@@ -12,11 +12,9 @@ RoxygenNote: 6.1.1
 Imports:
     caractr,
     dplyr,
-    impexp,
     lubridate,
     purrr,
     stringr,
     tidyr
 Remotes:
-    stephLH/caractr,
-    stephLH/impexp
+    stephLH/caractr
