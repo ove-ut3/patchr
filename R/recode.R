@@ -14,7 +14,7 @@ recode_id <- function(data, data_recode, vars_id) {
 
   duplicate <- data %>%
     dplyr::group_by_at(dplyr::vars(vars_id)) %>%
-    dplyr::filter(n() >= 2) %>%
+    dplyr::filter(dplyr::n() >= 2) %>%
     dplyr::ungroup()
 
   if (nrow(duplicate) >= 1) {
