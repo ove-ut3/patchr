@@ -49,7 +49,7 @@ rename <- function(data, data_rename, normalise_data_colnames = TRUE, drop = TRU
     return(data)
   }
 
-  if (normalise_data_colnames & any(colnames(data) != caractr::str_normalise_colnames(colnames(data)))) {
+  if (normalise_data_colnames == TRUE & any(colnames(data) != caractr::str_normalise_colnames(colnames(data)))) {
     data <- patchr::normalise_colnames(data)
   }
 
