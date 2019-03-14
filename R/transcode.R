@@ -8,6 +8,14 @@
 #'
 #' @return A transcoded data frame.
 #'
+#' @details
+#' R classes are :\cr
+#' - character\cr
+#' - date\cr
+#' - numeric\cr
+#' - integer\cr
+#' - factor
+#'
 #' @examples
 #' dplyr::tibble(var1 = "a", var2 = 1) %>%
 #'   patchr::transcode(dplyr::tibble(column = "var2", class = "character"))

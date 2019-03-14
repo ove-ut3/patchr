@@ -18,6 +18,14 @@ A transcoded data frame.
 The data frame columns are transcoded according to a correspondance table.\cr
 The correspondance table data_transcode must at least contains tow fields : \code{column} for the column name and \code{class} for the new R class.
 }
+\details{
+R classes are :\cr
+- character\cr
+- date\cr
+- numeric\cr
+- integer\cr
+- factor
+}
 \examples{
 dplyr::tibble(var1 = "a", var2 = 1) \%>\%
   patchr::transcode(dplyr::tibble(column = "var2", class = "character"))
