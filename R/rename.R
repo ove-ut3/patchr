@@ -19,10 +19,6 @@ normalise_colnames <- function(data){
   colnames(data) <- colnames(data) %>%
     caractr::str_normalise_colnames()
 
-  if(length(names(data)) != length(unique(names(data)))) {
-    names(data) <- make.unique(names(data), sep = "_")
-  }
-
   return(data)
 }
 

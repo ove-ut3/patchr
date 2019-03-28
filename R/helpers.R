@@ -18,7 +18,7 @@ replace_empty_to_na <- function(data){
     return(data)
   }
 
-  data <- dplyr::mutate_if(data, is.character, caractr::str_empty_to_na)
+  data <- dplyr::mutate_if(data, is.character, dplyr::na_if, "")
 
   return(data)
 }
