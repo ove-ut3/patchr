@@ -1,27 +1,3 @@
-#' Normalise column names of a data frame.
-#'
-#' @param data A data frame.
-#'
-#' @return A data frame with normalised colmun names.\cr
-#'
-#' Function \code{caractr::str_normalise_field()} is applied for each data column.
-#'
-#' @examples
-#' data <- dplyr::data_frame(
-#'   "Type d'unité Sirus : entreprise profilée ou unité légale" = NA_character_,
-#'   "Nic du siège"= NA_character_
-#' )
-#' patchr::normalise_colnames(data)
-#'
-#' @export
-normalise_colnames <- function(data){
-
-  colnames(data) <- colnames(data) %>%
-    caractr::str_normalise_colnames()
-
-  return(data)
-}
-
 #' Rename data frame columns.
 #'
 #' The data frame columns are renamed according to a correspondance table.\cr
@@ -46,7 +22,7 @@ rename <- function(data, data_rename, normalise_data_colnames = TRUE, drop = TRU
   }
 
   if (normalise_data_colnames == TRUE & any(colnames(data) != caractr::str_normalise_colnames(colnames(data)))) {
-    data <- patchr::normalise_colnames(data)
+    data <- impexp::normalise_colnames(data)
   }
 
   new_colnames <- dplyr::tibble(column = colnames(data)) %>%
