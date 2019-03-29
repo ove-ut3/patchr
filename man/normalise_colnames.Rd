@@ -20,6 +20,6 @@ data <- dplyr::data_frame(
   "Type d'unité Sirus : entreprise profilée ou unité légale" = NA_character_,
   "Nic du siège"= NA_character_
 )
-impexp::normalise_colnames(data)
+patchr::normalise_colnames(data)
 
 }
