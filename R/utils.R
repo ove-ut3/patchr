@@ -144,9 +144,11 @@ str_normalise_colnames <- function(string){
     # A trailing undersore is removed
     stringr::str_remove_all("_$") %>%
     # All non alphanumeric strings are removed
-    stringr::str_remove_all("[^\\w]") %>%
-    # All accents are removed
-    caractr::str_remove_accent()
+    stringr::str_remove_all("[^\\w]")
+
+  # All accents are removed
+  normalised_string[which(Encoding(normalised_string) == "UTF-8")] <- iconv(normalised_string[which(Encoding(normalised_string) == "UTF-8")], from = "UTF-8", to = "ASCII//TRANSLIT")
+  normalised_string <- iconv(normalised_string, to = "ASCII//TRANSLIT")
 
   # If duplicate, make unique
   if(length(normalised_string) != length(unique(normalised_string))) {

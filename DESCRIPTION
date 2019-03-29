@@ -16,5 +16,3 @@ Imports:
     purrr,
     stringr,
     tidyr
-Remotes:
-    stephLH/caractr
