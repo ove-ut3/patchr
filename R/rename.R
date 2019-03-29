@@ -43,7 +43,7 @@ rename <- function(data, data_rename, normalise_data_colnames = TRUE, drop = TRU
   }
 
   if (normalise_data_colnames == TRUE & any(colnames(data) != str_normalise_colnames(colnames(data)))) {
-    data <- impexp::normalise_colnames(data)
+    data <- patchr::normalise_colnames(data)
   }
 
   new_colnames <- dplyr::tibble(column = colnames(data)) %>%
