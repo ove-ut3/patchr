@@ -119,3 +119,44 @@ as_date <- function(x, origin = "1899-12-30") {
     return(as_date)
   }
 }
+<<<<<<< HEAD
+=======
+
+str_normalise_colnames <- function(string){
+
+  if (class(string) != "character") {
+    stop("Input vector must be a character vector", call. = FALSE)
+  }
+
+  # Lower case and conv from ISO-8859-1 if it does not work
+  normalised_string <- tryCatch(
+    {
+      tolower(string)
+    },
+    error = function(cond) {
+      normalised_string <- stringr::str_conv(string, "ISO-8859-1") %>%
+        tolower()
+      return(normalised_string)
+    }
+  )
+
+  normalised_string <- normalised_string %>%
+    # Replacement of punctuation and spaces by an underscore
+    stringr::str_replace_all("[[:punct:]\\s]+", "_") %>%
+    # A trailing undersore is removed
+    stringr::str_remove_all("_$") %>%
+    # All non alphanumeric strings are removed
+    stringr::str_remove_all("[^\\w]")
+
+  # All accents are removed
+  normalised_string[which(Encoding(normalised_string) == "UTF-8")] <- iconv(normalised_string[which(Encoding(normalised_string) == "UTF-8")], from = "UTF-8", to = "ASCII//TRANSLIT")
+  normalised_string <- iconv(normalised_string, to = "ASCII//TRANSLIT")
+
+  # If duplicate, make unique
+  if(length(normalised_string) != length(unique(normalised_string))) {
+    normalised_string <- make.unique(normalised_string, sep = "_")
+  }
+
+  return(normalised_string)
+}
+>>>>>>> 8f1999c36f176e9ad2fb5cde5358acf0ba1a7b78
