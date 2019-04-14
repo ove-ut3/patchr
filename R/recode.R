@@ -13,6 +13,7 @@
 recode_id <- function(data, data_recode, vars_id) {
 
   duplicate <- data %>%
+    tidyr::drop_na(!!vars_id) %>%
     dplyr::group_by_at(dplyr::vars(vars_id)) %>%
     dplyr::filter(dplyr::n() >= 2) %>%
     dplyr::ungroup()
