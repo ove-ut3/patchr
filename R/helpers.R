@@ -15,7 +15,7 @@ filter_data_patch <- function(data, source = NULL, filtre = NULL) {
 
   if (!is.null(filtre)) {
     data <- tidyr::separate_rows(data, filtre, sep = ";") %>%
-      dplyr::filter(filtre == !!filtre | is.na(filtre))
+      dplyr::filter(filtre %in% !!filtre | is.na(filtre))
   }
 
   return(data)
