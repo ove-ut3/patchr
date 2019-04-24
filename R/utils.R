@@ -6,7 +6,8 @@ as_numeric <- function(x) {
 
   if (any(class(x) %in% c("character", "factor")) == TRUE) {
 
-    as_numeric <- stringr::str_match(x, "[\\d\\.,]+") %>%
+    as_numeric <- stringr::str_remove_all(x, "\\s") %>%
+      stringr::str_extract("[\\d\\.,]+") %>%
       stringr::str_replace_all(",", ".") %>%
       as.numeric()
 
@@ -39,7 +40,8 @@ as_integer <- function(x) {
 
   if (any(class(x) %in% c("character", "factor")) == TRUE) {
 
-    as_integer <- stringr::str_match(x, "^(\\d+)") %>%
+    as_integer <- stringr::str_remove_all(x, "\\s") %>%
+      stringr::str_match("^(\\d+)") %>%
       .[, 2] %>%
       as.integer()
 
