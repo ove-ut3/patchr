@@ -29,10 +29,10 @@ transcode <- function(data, data_transcode) {
 
   } else {
 
-    data_transcodage <- dplyr::data_frame(column = colnames(data),
-                                           class = lapply(data, class) %>%
-                                             purrr::map_chr(1) %>%
-                                             tolower()
+    data_transcodage <- dplyr::tibble(column = colnames(data),
+                                      class = lapply(data, class) %>%
+                                        purrr::map_chr(1) %>%
+                                        tolower()
     ) %>%
       dplyr::mutate(num_column = dplyr::row_number()) %>%
       dplyr::inner_join(data_transcode %>%
