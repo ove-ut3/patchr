@@ -35,7 +35,7 @@ as_numeric <- function(x) {
 as_integer <- function(x) {
 
   if (all(is.na(x))) {
-    return(as.numeric(x))
+    return(as.integer(x))
   }
 
   if (any(class(x) %in% c("character", "factor")) == TRUE) {
