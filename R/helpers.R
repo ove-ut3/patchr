@@ -53,7 +53,7 @@ remove_duplicate <- function(data, var) {
 #' patchr::duplicate(data, cle1, cle2)
 #'
 #' # Without duplicate
-#' patchr::duplicate(data, cle1, cle2, champ))
+#' patchr::duplicate(data, cle1, cle2, champ)
 #'
 #' @export
 duplicate <- function(data, ...){

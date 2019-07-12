@@ -22,6 +22,6 @@ data <- dplyr::tibble(cle1 = c("A", "A", "B", "B"), cle2 = c("1", "1", "2", "3")
 patchr::duplicate(data, cle1, cle2)
 
 # Without duplicate
-patchr::duplicate(data, cle1, cle2, champ))
+patchr::duplicate(data, cle1, cle2, champ)
 
 }
