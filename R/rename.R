@@ -78,8 +78,9 @@ normalise_colnames <- function(data){
 #' @return A renamed data frame.
 #'
 #' @examples
-#' dplyr::tibble(var1 = "a", old = "b") %>%
-#'   patchr::rename(dplyr::tibble(column = "old", rename = "new"), drop = FALSE)
+#'
+#' data <- dplyr::tibble(var1 = "a", old = "b")
+#' patchr::rename(data, dplyr::tibble(column = "old", rename = "new"), drop = FALSE)
 #'
 #' @export
 rename <- function(data, data_rename, normalise_data_colnames = TRUE, drop = TRUE) {

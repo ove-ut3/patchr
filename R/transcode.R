@@ -17,8 +17,8 @@
 #' - factor
 #'
 #' @examples
-#' dplyr::tibble(var1 = "a", var2 = 1) %>%
-#'   patchr::transcode(dplyr::tibble(column = "var2", class = "character"))
+#' data <- dplyr::tibble(var1 = "a", var2 = 1)
+#' patchr::transcode(data, dplyr::tibble(column = "var2", class = "character"))
 #'
 #' @export
 transcode <- function(data, data_transcode) {

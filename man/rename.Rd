@@ -23,7 +23,8 @@ The data frame columns are renamed according to a correspondance table.\cr
 The correspondance table data_remane must at least contains tow columns : \code{column} for the old column names and \code{rename} for the new column names.
 }
 \examples{
-dplyr::tibble(var1 = "a", old = "b") \%>\%
-  patchr::rename(dplyr::tibble(column = "old", rename = "new"), drop = FALSE)
+
+data <- dplyr::tibble(var1 = "a", old = "b")
+patchr::rename(data, dplyr::tibble(column = "old", rename = "new"), drop = FALSE)
 
 }
