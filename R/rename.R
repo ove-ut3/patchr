@@ -110,7 +110,7 @@ rename <- function(data, data_rename, normalise_data_colnames = TRUE, drop = TRU
   new_colnames <- new_colnames[["rename"]]
 
   if (length(unique(new_colnames)) != length(new_colnames)) {
-    duplicate <- which(data(new_colnames) >= 2) %>% names()
+    duplicate <- which(table(new_colnames) >= 2) %>% names()
     message("Duplicate in data_rename on column \"rename\" : ", paste0(duplicate, collapse = ", "))
     new_colnames <- make.unique(new_colnames)
   }
