@@ -42,7 +42,8 @@ remove_duplicate <- function(data, var) {
 
 #' Extract duplicate rows from a data frame.
 #'
-#' @param A data frame.
+#' @param data A data frame.
+#' @param \dots Columns on which to return potential duplicates.
 #'
 #' @return A data frame containing only the duplicate rows.
 #'

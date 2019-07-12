@@ -7,7 +7,9 @@
 duplicate(data, ...)
 }
 \arguments{
-\item{A}{data frame.}
+\item{data}{A data frame.}
+
+\item{\dots}{Columns on which to return potential duplicates.}
 }
 \value{
 A data frame containing only the duplicate rows.
