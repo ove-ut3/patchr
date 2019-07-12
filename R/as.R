@@ -21,7 +21,7 @@ as_factor <- function(string, data_levels = NULL) {
   levels <- data_levels %>%
     dplyr::filter(column == !!column) %>%
     dplyr::arrange(order) %>%
-    dplyr::pull(level)
+    dplyr::pull(.data$level)
 
   if (length(levels) != 0) {
     string <- factor(string, levels = levels)

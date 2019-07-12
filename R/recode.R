@@ -22,8 +22,8 @@ recode_id <- function(data, data_recode, vars_id) {
     stop("Duplicates are in data according to vars_id arguments", call. = FALSE)
   }
 
-  data_recode <- dplyr::filter(data_recode, column %in% names(data)) %>%
-    dplyr::select(!!vars_id, column, .value = value)
+  data_recode <- dplyr::filter(data_recode, .data$column %in% names(data)) %>%
+    dplyr::select(!!vars_id, .data$column, .value = .data$value)
 
   if (dplyr::inner_join(data, data_recode, by = vars_id) %>% nrow() == 0) {
     return(data)
@@ -32,18 +32,18 @@ recode_id <- function(data, data_recode, vars_id) {
   data <- dplyr::mutate(data, .id = dplyr::row_number())
 
   options(warn = -1)
-  id_na <- dplyr::select(data, !!vars_id, .id) %>%
-    tidyr::gather("column", "value", -.id) %>%
-    dplyr::filter(is.na(value)) %>%
-    dplyr::select(.id) %>%
+  id_na <- dplyr::select(data, !!vars_id, .data$.id) %>%
+    tidyr::gather("column", "value", -.data$.id) %>%
+    dplyr::filter(is.na(.data$value)) %>%
+    dplyr::select(.data$.id) %>%
     unique()
   options(warn = 0)
 
   data_id_na <- dplyr::semi_join(data, id_na, by = ".id") %>%
-    dplyr::select(-.id)
+    dplyr::select(-.data$.id)
 
   data <- dplyr::anti_join(data, id_na, by = ".id") %>%
-    dplyr::select(-.id)
+    dplyr::select(-.data$.id)
 
   col_order <- names(data)
 
@@ -67,11 +67,11 @@ recode_id <- function(data, data_recode, vars_id) {
 
   recode <- tidyr::gather(data, "column", "value", -!!vars_id) %>%
     dplyr::left_join(data_recode, by = c(vars_id, "column")) %>%
-    dplyr::mutate(value = ifelse(!is.na(.value), .value, value),
-                  value = dplyr::na_if(value, "[null]")) %>%
-    dplyr::select(!!vars_id, column, value) %>%
+    dplyr::mutate(value = ifelse(!is.na(.data$.value), .data$.value, .data$value),
+                  value = dplyr::na_if(.data$value, "[null]")) %>%
+    dplyr::select(!!vars_id, .data$column, .data$value) %>%
     unique() %>% # In case of multiple answer field
-    tidyr::spread(column, value)
+    tidyr::spread(.data$column, .data$value)
 
   recode <- patchr::transcode(recode, data_transcode)
 
@@ -120,7 +120,7 @@ recode_formula <- function(data, data_recode, new_vars = TRUE) {
   if (nrow(data) == 0) return(data)
 
   if (new_vars == FALSE) {
-    data_recode <- dplyr::filter(data_recode, column %in% names(data))
+    data_recode <- dplyr::filter(data_recode, .data$column %in% names(data))
   }
 
   if (nrow(data_recode) == 0) return(data)
@@ -133,17 +133,17 @@ recode_formula <- function(data, data_recode, new_vars = TRUE) {
     if (length(new_columns) >= 1) {
 
       list_mutate <- data_recode %>%
-        dplyr::filter(column %in% new_columns) %>%
+        dplyr::filter(.data$column %in% new_columns) %>%
         dplyr::mutate(class = dplyr::case_when(
-          stringr::str_detect(value, "^\\d+L$") ~ "integer",
-          stringr::str_detect(value, "^as\\.integer\\(") ~ "integer",
+          stringr::str_detect(.data$value, "^\\d+L$") ~ "integer",
+          stringr::str_detect(.data$value, "^as\\.integer\\(") ~ "integer",
           value == "NA_integer_"  ~ "integer",
-          stringr::str_detect(value, "^[\\d\\.]+$") ~ "real",
-          stringr::str_detect(value, "^as\\.numeric\\(") ~ "real",
+          stringr::str_detect(.data$value, "^[\\d\\.]+$") ~ "real",
+          stringr::str_detect(.data$value, "^as\\.numeric\\(") ~ "real",
           value == "NA_real_"  ~ "real",
           TRUE ~ "character")
         ) %>%
-        dplyr::select(column, class) %>%
+        dplyr::select(.data$column, class) %>%
         unique() %>%
         dplyr::pull(class) %>%
         paste0("NA_", ., "_") %>%
@@ -161,10 +161,10 @@ recode_formula <- function(data, data_recode, new_vars = TRUE) {
   }
 
   data_recode <- data_recode %>%
-    dplyr::mutate(classe = purrr::map(column, ~ class(data[[.]])),
-                  value = ifelse(purrr::map_lgl(classe, ~ "factor" %in% .),
+    dplyr::mutate(classe = purrr::map(.data$column, ~ class(data[[.]])),
+                  value = ifelse(purrr::map_lgl(.data$classe, ~ "factor" %in% .),
                                   glue::glue("factor({value}, levels = levels({column}))"),
-                                  value))
+                                 .data$value))
 
   list_mutate <- ifelse(is.na(data_recode$condition),
                               data_recode$value,
@@ -227,17 +227,17 @@ recode_factor <- function(data, data_recode, data_levels = NULL, new_vars = FALS
 
   recode <- data %>%
     dplyr::mutate(.id = dplyr::row_number()) %>%
-    dplyr::select(.id, cols_factor) %>%
+    dplyr::select(.data$.id, cols_factor) %>%
     dplyr::mutate_at(dplyr::vars(cols_factor), as.character) %>%
-    tidyr::gather("column", "value", -.id) %>%
+    tidyr::gather("column", "value", -.data$.id) %>%
     dplyr::left_join(data_recode %>%
-                       dplyr::select(column, value, factor),
+                       dplyr::select(.data$column, .data$value, factor),
                      by = c("column", "value")) %>%
-    dplyr::mutate(value = ifelse(!is.na(factor), factor, value) %>%
+    dplyr::mutate(value = ifelse(!is.na(factor), factor, .data$value) %>%
                     dplyr::na_if("[null]")) %>%
     dplyr::select(-factor) %>%
-    tidyr::spread(column, value) %>%
-    dplyr::select(-.id) %>%
+    tidyr::spread(.data$column, .data$value) %>%
+    dplyr::select(-.data$.id) %>%
     dplyr::mutate_at(dplyr::vars(cols_factor), patchr::as_factor, data_levels) %>%
     dplyr::bind_cols(data %>%
                        dplyr::select(which(!names(.) %in% cols_factor)))

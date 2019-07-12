@@ -97,7 +97,7 @@ rename <- function(data, data_rename, normalise_data_colnames = TRUE, drop = TRU
   }
 
   new_colnames <- dplyr::tibble(column = colnames(data)) %>%
-    dplyr::left_join(dplyr::mutate(data_rename, rename = ifelse(is.na(rename), column, rename)),
+    dplyr::left_join(dplyr::mutate(data_rename, rename = ifelse(is.na(rename), .data$column, rename)),
                      by = "column")
 
   if (drop == TRUE) {
@@ -107,7 +107,7 @@ rename <- function(data, data_rename, normalise_data_colnames = TRUE, drop = TRU
       new_colnames <- dplyr::filter(new_colnames, !is.na(rename))
     }
   } else if (drop == FALSE) {
-    new_colnames <- dplyr::mutate(new_colnames, rename = ifelse(!is.na(rename), rename, column))
+    new_colnames <- dplyr::mutate(new_colnames, rename = ifelse(!is.na(rename), rename, .data$column))
   }
 
   new_colnames <- new_colnames[["rename"]]
