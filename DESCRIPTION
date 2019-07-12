@@ -1,5 +1,5 @@
 Package: patchr
-Title: Additional functions to patch a data frame or a vector.
+Title: Additional functions to patch a data frame or a vector
 Version: 0.1
 Authors@R: person("Stéphane Le Hénanff", "Stéphane Le Hénanff", email = "github@le-henanff.fr", role = c("aut", "cre"))
 Description: Additional functions to patch a data frame or a vector.
