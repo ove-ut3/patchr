@@ -5,7 +5,7 @@ Authors@R: person("Stéphane Le Hénanff", "Stéphane Le Hénanff", email = "git
 Description: Additional functions to patch a data frame or a vector.
 Depends:
     R (>= 3.2.5)
-License: Etalab
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
