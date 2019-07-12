@@ -5,7 +5,10 @@
 #' @return A character vector.
 #'
 #' @examples
-#' patchr::str_normalise_colnames(c("Type d'unité Sirus : entreprise profilée ou unité légale", "Nic du siège"))
+#' patchr::str_normalise_colnames(
+#'   c("Type d'unité Sirus : entreprise profilée ou unité légale",
+#'    "Nic du siège")
+#' )
 #'
 #' @export
 str_normalise_colnames <- function(string){

@@ -16,6 +16,9 @@ A character vector.
 Normalise a string for a use as table column names.
 }
 \examples{
-patchr::str_normalise_colnames(c("Type d'unité Sirus : entreprise profilée ou unité légale", "Nic du siège"))
+patchr::str_normalise_colnames(
+  c("Type d'unité Sirus : entreprise profilée ou unité légale",
+   "Nic du siège")
+)
 
 }
