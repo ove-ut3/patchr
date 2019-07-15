@@ -37,7 +37,7 @@ str_normalise_colnames <- function(string){
     # All non alphanumeric strings are removed
     stringr::str_remove_all("[^\\w]") %>%
     # All accents are removed
-    caractr::str_remove_accent()
+    stringi::stri_trans_general("latin-ascii")
 
   # If duplicate, make unique
   if(length(normalised_string) != length(unique(normalised_string))) {
