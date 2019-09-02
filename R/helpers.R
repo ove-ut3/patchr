@@ -64,13 +64,18 @@ duplicate <- function(data, ...){
   }
 
   group_by <- dplyr::quos(...)
+  if (length(group_by) == 0) {
+    group_by_names <- names(data)
+  } else {
+    group_by_names <- purrr::map_chr(group_by, dplyr::quo_name)
+  }
 
-  duplicate <- dplyr::group_by(data, !!!group_by) %>%
+  duplicate <- dplyr::group_by_at(data, group_by_names) %>%
     dplyr::filter(dplyr::row_number() >= 2) %>%
     dplyr::ungroup() %>%
-    dplyr::select(purrr::map_chr(group_by, dplyr::quo_name)) %>%
+    dplyr::select(group_by_names) %>%
     unique() %>%
-    dplyr::right_join(data, ., by = purrr::map_chr(group_by, dplyr::quo_name))
+    dplyr::right_join(data, ., by = group_by_names)
 
   return(duplicate)
 }
