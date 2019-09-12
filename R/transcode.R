@@ -79,34 +79,39 @@ as_date <- function(x, origin = "1899-12-30") {
 
   if (any(class(x) %in% c("character", "factor")) == TRUE) {
 
+    # Date as numeric
     position <- stringr::str_detect(x, "^\\d{5}(\\.0+)?$") %>% which()
     if (length(position) >= 1) {
       as_date[position] <- as.Date.numeric(as.integer(x[position]), origin)
     }
 
-    position <- stringr::str_detect(x, "^\\d{1,2}/\\d{1,2}/\\d{4}$") %>% which()
+    position <- stringr::str_detect(x, "^\\d{1,2}[-/]\\d{1,2}[-/]\\d{4}$") %>% which()
     if (length(position) >= 1) {
-      as_date[position] <- as.Date(x[position], "%d/%m/%Y")
+      as_date[position] <- lubridate::dmy(x[position])
     }
 
-    position <- stringr::str_detect(x, "^\\d{1,2}/\\d{4}$") %>% which()
+    position <- stringr::str_detect(x, "^\\d{1,2}[-/]\\d{4}$") %>% which()
     if (length(position) >= 1) {
-      as_date[position] <- as.Date(paste0("01/", x[position]), "%d/%m/%Y")
+      as_date[position] <- lubridate::dmy(x[position])
     }
 
-    position <- stringr::str_detect(x, "^\\d{1,2}-\\d{1,2}-\\d{4}$") %>% which()
+    position <- stringr::str_detect(x, "^\\d{1,2}[-/]\\d{1,2}[-/]\\d{1,2}$") %>% which()
     if (length(position) >= 1) {
-      as_date[position] <- as.Date(x[position], "%d-%m-%Y")
+
+      first_part <- stringr::str_match(x, "^(\\d{1,2})[-/]")[, 2] %>%
+        as.integer()
+
+      if (all(first_part %in% 1:31)) {
+        as_date[position] <- lubridate::dmy(x[position])
+      } else {
+        as_date[position] <- lubridate::ymd(x[position])
+      }
+
     }
 
-    position <- stringr::str_detect(x, "^\\d{4}-\\d{1,2}-\\d{1,2}$") %>% which()
+    position <- stringr::str_detect(x, "^\\d{4}[-/]\\d{1,2}[-/]\\d{1,2}$") %>% which()
     if (length(position) >= 1) {
-      as_date[position] <- as.Date(x[position])
-    }
-
-    position <- stringr::str_detect(x, "^\\d{4}/\\d{1,2}/\\d{1,2}$") %>% which()
-    if (length(position) >= 1) {
-      as_date[position] <- as.Date(x[position])
+      as_date[position] <- lubridate::ymd(x[position])
     }
 
     #libell\u00E9 de mois (excel)
