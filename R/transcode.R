@@ -92,7 +92,7 @@ as_date <- function(x, origin = "1899-12-30") {
 
     position <- stringr::str_detect(x, "^\\d{1,2}[-/]\\d{4}$") %>% which()
     if (length(position) >= 1) {
-      as_date[position] <- lubridate::dmy(x[position])
+      as_date[position] <- lubridate::dmy(paste0("01/", x[position]))
     }
 
     position <- stringr::str_detect(x, "^\\d{1,2}[-/]\\d{1,2}[-/]\\d{1,2}$") %>% which()
@@ -115,9 +115,10 @@ as_date <- function(x, origin = "1899-12-30") {
     }
 
     #libell\u00E9 de mois (excel)
-    if (any(stringr::str_detect(x, "^[[:alpha:]]{3,4}-"), na.rm = TRUE)) {
+    position <- stringr::str_detect(x, "^[[:alpha:]]{3,4}-") %>% which()
+    if (length(position) >= 1) {
 
-      date_char <- x %>%
+      date_char <- x[position] %>%
         stringr::str_subset("^[[:alpha:]]{3,4}-") %>%
         stringr::str_match("^([[:alpha:]]{3,4})-(\\d{2})$") %>%
         as.data.frame() %>%
@@ -131,7 +132,7 @@ as_date <- function(x, origin = "1899-12-30") {
           paste0("01/", .)
         )
 
-      as_date[stringr::str_which(x, "^[[:alpha:]]{3,4}-")] <- date_char$date_char
+      as_date[position] <- lubridate::dmy(date_char$date_char)
 
     }
 
