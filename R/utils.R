@@ -68,3 +68,13 @@ as_integer <- function(x) {
     return(as.integer(x))
   }
 }
+
+as_logical <- function(x) {
+
+  if (all(na.omit(x) %in% c("O", "N"))) {
+
+    x <- dplyr::if_else(x == "O", TRUE, FALSE)
+
+  }
+
+}

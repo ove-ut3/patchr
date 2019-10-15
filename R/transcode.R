@@ -52,6 +52,7 @@ transcode <- function(data, data_transcode) {
         else if (new_class == "numeric") data[[column]] <- as_numeric(data[[column]])
         else if (new_class == "integer") data[[column]] <- as_integer(data[[column]])
         else if (new_class == "factor") data[[column]] <- as.factor(data[[column]])
+        else if (new_class == "logical") data[[column]] <- as_logical(data[[column]])
 
       }
 
