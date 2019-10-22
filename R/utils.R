@@ -71,9 +71,9 @@ as_integer <- function(x) {
 
 as_logical <- function(x) {
 
-  if (all(na.omit(x) %in% c("O", "N"))) {
+  if (all(na.omit(x) %in% c("TRUE", "FALSE", "O", "N"))) {
 
-    x <- dplyr::if_else(x == "O", TRUE, FALSE)
+    x <- dplyr::if_else(x %in% c("TRUE", "O"), TRUE, FALSE)
 
   }
 
