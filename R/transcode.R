@@ -102,7 +102,7 @@ as_date <- function(x, origin = "1899-12-30") {
       first_part <- stringr::str_match(x, "^(\\d{1,2})[-/]")[, 2] %>%
         as.integer()
 
-      if (all(first_part %in% 1:31)) {
+      if (all(na.omit(first_part) %in% 1:31)) {
         as_date[position] <- lubridate::dmy(x[position])
       } else {
         as_date[position] <- lubridate::ymd(x[position])
