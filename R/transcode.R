@@ -158,3 +158,24 @@ as_date <- function(x, origin = "1899-12-30") {
     return(as_date)
   }
 }
+
+#' Fix birth date
+#'
+#' Treats a date as a birth date for years equal or prior to 1969.
+#'
+#' @param date Date to fix
+#'
+#' @return A birth date
+#'
+#' @export
+fix_birth_date <- function(date) {
+
+  birth_date <- date
+
+  position <- which(lubridate::year(birth_date) > lubridate::year(lubridate::today()))
+  if (length(position) >= 1) {
+    birth_date[position] <- birth_date[position] - lubridate::years(100)
+  }
+
+  return(birth_date)
+}
