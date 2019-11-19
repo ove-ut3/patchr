@@ -33,7 +33,8 @@ remove_duplicate <- function(data, var) {
 
   quo_var <- dplyr::enquo(var)
 
-  remove_duplicate <- tidyr::nest_legacy(data, !!quo_var) %>%
+  remove_duplicate <- data %>%
+    tidyr::nest_legacy(!!quo_var) %>%
     dplyr::mutate(!!dplyr::quo_name(quo_var) := purrr::map_chr(data, ~ ifelse(length(.[[1]]) == 1, .[[1]], NA_character_))) %>%
     dplyr::select(-data)
 
