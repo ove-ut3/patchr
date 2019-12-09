@@ -78,3 +78,10 @@ as_logical <- function(x) {
   }
 
 }
+
+df_partition <- function(data, by) {
+  list(
+    keys = dplyr::select(data, {{ by }}),
+    values = dplyr::select(data, - {{ by }})
+  )
+}

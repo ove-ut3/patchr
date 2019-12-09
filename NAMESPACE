@@ -3,6 +3,7 @@
 export(anti_join_bind)
 export(as_date)
 export(as_factor)
+export(df_update)
 export(duplicate)
 export(filter_data_patch)
 export(fix_birth_date)
