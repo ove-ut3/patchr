@@ -12,80 +12,16 @@
 #' @export
 recode_id <- function(data, data_recode, vars_id) {
 
-  duplicate <- data %>%
-    tidyr::drop_na(!!vars_id) %>%
-    dplyr::group_by_at(dplyr::vars(vars_id)) %>%
-    dplyr::filter(dplyr::n() >= 2) %>%
-    dplyr::ungroup()
-
-  if (nrow(duplicate) >= 1) {
-    stop("Duplicates are in data according to vars_id arguments", call. = FALSE)
-  }
-
-  data_recode <- dplyr::filter(data_recode, .data$column %in% names(data)) %>%
-    dplyr::select(!!vars_id, .data$column, .value = .data$value)
-
-  if (dplyr::inner_join(data, data_recode, by = vars_id) %>% nrow() == 0) {
-    return(data)
-  }
-
-  data <- dplyr::mutate(data, .id = dplyr::row_number())
-
-  options(warn = -1)
-  id_na <- dplyr::select(data, !!vars_id, .data$.id) %>%
-    tidyr::gather("column", "value", -.data$.id) %>%
-    dplyr::filter(is.na(.data$value)) %>%
-    dplyr::select(.data$.id) %>%
-    unique()
-  options(warn = 0)
-
-  data_id_na <- dplyr::semi_join(data, id_na, by = ".id") %>%
-    dplyr::select(-.data$.id)
-
-  data <- dplyr::anti_join(data, id_na, by = ".id") %>%
-    dplyr::select(-.data$.id)
-
-  col_order <- names(data)
-
-  if (any(lapply(data, class) == "list")) {
-    col_list <- dplyr::select(data, !!vars_id, which(purrr::map_lgl(data, is.list)))
-    data <- dplyr::select(data, -which(purrr::map_lgl(data, is.list)))
-  }
-
-  if (any(purrr::map_lgl(data, ~ any(class(.) == "POSIXct")))) {
-    col_posix <- dplyr::select(data, !!vars_id, which(purrr::map_lgl(data, ~ any(class(.) == "POSIXct"))))
-    data <- dplyr::select(data, -which(purrr::map_lgl(data, ~ any(class(.) == "POSIXct"))))
-  }
-
-  data_transcode <- dplyr::tibble(column = names(data),
-                               class = purrr::map_chr(data, class) %>% tolower())
-
-  if (any(lapply(data, class) == "Date")) {
-    data <- data %>%
-      dplyr::mutate_at(.vars = names(.)[which(purrr::map_lgl(., lubridate::is.Date))], as.character)
-  }
-
-  recode <- tidyr::gather(data, "column", "value", -!!vars_id) %>%
-    dplyr::left_join(data_recode, by = c(vars_id, "column")) %>%
-    dplyr::mutate(value = ifelse(!is.na(.data$.value), .data$.value, .data$value),
-                  value = dplyr::na_if(.data$value, "[null]")) %>%
-    dplyr::select(!!vars_id, .data$column, .data$value) %>%
-    unique() %>% # In case of multiple answer field
-    tidyr::spread(.data$column, .data$value)
-
-  recode <- patchr::transcode(recode, data_transcode)
-
-  if (exists("col_list")) {
-    recode <- dplyr::full_join(recode, col_list, by = vars_id)
-  }
-
-  if (exists("col_posix")) {
-    recode <- dplyr::full_join(recode, col_posix, by = vars_id)
-  }
-
-  recode <- recode %>%
-    dplyr::select(purrr::map_int(col_order, ~ which(. == names(recode)))) %>%
-    dplyr::bind_rows(data_id_na)
+  recode <- data %>%
+    dplyr::select_at(c(vars_id, unique(data_recode$column))) %>%
+    tidyr::gather("column", "value", -vars_id) %>%
+    patchr::df_update(data_recode, by = c(vars_id, "column")) %>%
+    tidyr::spread(column, value, fill = NA) %>%
+    dplyr::left_join(
+      dplyr::select(data, -unique(data_recode$column)),
+      by = vars_id
+    ) %>%
+    dplyr::select(names(data))
 
   return(recode)
 }
