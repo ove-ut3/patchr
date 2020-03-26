@@ -12,6 +12,9 @@
 #' @export
 recode_id <- function(data, data_recode, vars_id) {
 
+  data_recode <- dplyr::select_at(data_recode, c(vars_id, "column", "value")) %>%
+    dplyr::semi_join(data, by = vars_id)
+
   recode <- data %>%
     dplyr::select_at(c(vars_id, unique(data_recode$column))) %>%
     tidyr::gather("column", "value", -vars_id) %>%
