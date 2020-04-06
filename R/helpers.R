@@ -60,23 +60,11 @@ remove_duplicate <- function(data, var) {
 #' @export
 duplicate <- function(data, ...){
 
-  if (any(class(data) == "data.frame") == FALSE) {
-    stop("The first paramater must be a data frame", call. = FALSE)
-  }
-
-  group_by <- dplyr::quos(...)
-  if (length(group_by) == 0) {
-    group_by_names <- names(data)
-  } else {
-    group_by_names <- purrr::map_chr(group_by, dplyr::quo_name)
-  }
-
-  duplicate <- dplyr::group_by_at(data, group_by_names) %>%
-    dplyr::filter(dplyr::row_number() >= 2) %>%
-    dplyr::ungroup() %>%
-    dplyr::select(group_by_names) %>%
-    unique() %>%
-    dplyr::right_join(data, ., by = group_by_names)
+  duplicate <- data %>%
+    dplyr::count(..., name = ".duplicate") %>%
+    dplyr::filter(.duplicate >= 2) %>%
+    dplyr::select(-.duplicate) %>%
+    dplyr::right_join(data, ., by = purrr::map_chr(rlang::quos(...), rlang::quo_name))
 
   return(duplicate)
 }
