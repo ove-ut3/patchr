@@ -13,7 +13,7 @@ df_update(data, update, by)
 
 \item{by}{Columns used to join both tibbles
 
-https://github.com/tidyverse/dplyr/issues/4595#issuecomment-547420916}
+https://github.com/tidyverse/dplyr/issues/4595#issuecomment-548123242}
 }
 \description{
 Update a tibble values according to a second update tibble
