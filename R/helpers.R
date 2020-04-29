@@ -35,7 +35,17 @@ remove_duplicate <- function(data, var) {
 
   remove_duplicate <- data %>%
     tidyr::nest_legacy(!!quo_var) %>%
-    dplyr::mutate(!!dplyr::quo_name(quo_var) := purrr::map_chr(data, ~ ifelse(length(.[[1]]) == 1, .[[1]], NA_character_))) %>%
+    dplyr::mutate(
+      !!dplyr::quo_name(quo_var) := purrr::map_chr(
+        data,
+        ~ dplyr::if_else(
+          length(.[[1]]) == 1,
+          .[[1]],
+          NA_character_,
+          NA_character_
+        )
+      )
+    ) %>%
     dplyr::select(-data)
 
   return(remove_duplicate)
@@ -97,7 +107,7 @@ patch_vector <- function(current, target, only_na = FALSE){
   }
 
   if (only_na == FALSE) {
-    current <- ifelse(!is.na(target), target, current)
+    current <- dplyr::if_else(!is.na(target), target, current)
   } else if (only_na == TRUE) {
     current[which(is.na(current))] <- target[which(is.na(current))]
   }

@@ -23,34 +23,54 @@ rename <- function(data, data_rename, clean_colnames = TRUE, drop = TRUE) {
   }
 
   if (clean_colnames == TRUE & any(colnames(data) != janitor::make_clean_names(colnames(data)))) {
+
     data <- janitor::clean_names(data)
+
   }
 
   new_colnames <- dplyr::tibble(column = colnames(data)) %>%
-    dplyr::left_join(dplyr::mutate(data_rename, rename = ifelse(is.na(rename), .data$column, rename)),
-                     by = "column")
+    dplyr::left_join(
+      data_rename %>%
+        dplyr::mutate(rename = dplyr::if_else(is.na(rename), .data$column, rename)),
+      by = "column"
+    )
 
   if (drop == TRUE) {
+
     column_drop <- which(is.na(new_colnames$rename))
+
     if (length(column_drop) != 0) {
+
       data <- dplyr::select(data, -which(is.na(new_colnames$rename)))
       new_colnames <- dplyr::filter(new_colnames, !is.na(rename))
+
     }
+
   } else if (drop == FALSE) {
-    new_colnames <- dplyr::mutate(new_colnames, rename = ifelse(!is.na(rename), rename, .data$column))
+
+    new_colnames <- dplyr::mutate(new_colnames, rename = dplyr::if_else(!is.na(rename), rename, .data$column))
+
   }
 
   new_colnames <- new_colnames[["rename"]]
 
   if (length(unique(new_colnames)) != length(new_colnames)) {
+
     duplicate <- which(table(new_colnames) >= 2) %>% names()
     message("Duplicate in data_rename on column \"rename\" : ", paste0(duplicate, collapse = ", "))
     new_colnames <- make.unique(new_colnames)
+
   }
 
   colnames(data) <- new_colnames
 
-  if (ncol(data) == 0) return(NULL)
-  else return(data)
+  if (ncol(data) == 0) {
 
+    return(NULL)
+
+  } else {
+
+    return(data)
+
+  }
 }

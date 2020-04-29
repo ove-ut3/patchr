@@ -128,7 +128,11 @@ as_date <- function(x, origin = "1899-12-30") {
           date_char = paste0(
             dplyr::recode(.data$V2, "janv" = "01", "f\u00E9vr" = "02", "mars" = "03", "avr" = "04", "mai" = "05", "juin" = "06", "juil" = "07", "ao\u00FBt" = "08", "sept" = "09", "oct" = "10", "nov" = "11", "d\u00E9c" = "12"),
             "/",
-            ifelse(as.numeric(.data$V3) >= 76, paste0("19", .data$V3), paste0("20", .data$V3))
+            dplyr::if_else(
+              as.numeric(.data$V3) >= 76,
+              paste0("19", .data$V3),
+              paste0("20", .data$V3)
+            )
           ) %>%
           paste0("01/", .)
         )
