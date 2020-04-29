@@ -12,6 +12,7 @@ RoxygenNote: 7.1.0
 Imports:
     dplyr,
     glue,
+    janitor,
     lubridate,
     purrr,
     rlang,

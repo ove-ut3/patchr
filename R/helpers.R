@@ -62,8 +62,8 @@ duplicate <- function(data, ...){
 
   duplicate <- data %>%
     dplyr::count(..., name = ".duplicate") %>%
-    dplyr::filter(.duplicate >= 2) %>%
-    dplyr::select(-.duplicate) %>%
+    dplyr::filter(.data$.duplicate >= 2) %>%
+    dplyr::select(-.data$.duplicate) %>%
     dplyr::right_join(data, ., by = purrr::map_chr(rlang::quos(...), rlang::quo_name))
 
   return(duplicate)

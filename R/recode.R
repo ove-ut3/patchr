@@ -25,7 +25,7 @@ recode_id <- function(data, data_recode, vars_id) {
     tidyr::gather("column", "value", -vars_id) %>%
     patchr::df_update(data_recode, by = c(vars_id, "column")) %>%
     dplyr::mutate_at("value", dplyr::na_if, "[null]") %>%
-    tidyr::spread(column, value, fill = NA) %>%
+    tidyr::spread(.data$column, .data$value, fill = NA) %>%
     patchr::transcode(data_transcode) %>%
     dplyr::left_join(
       dplyr::select(data, -unique(data_recode$column)),
