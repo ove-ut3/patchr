@@ -21,36 +21,6 @@ filter_data_patch <- function(data, source = NULL, filtre = NULL) {
   return(data)
 }
 
-#' Remove duplicate rows from a table according a column name.
-#'
-#' @param data A data frame.
-#' @param var A variable for which duplicate rows are removed.
-#'
-#' @return A data frame with no duplicate for column name.
-#'
-#' @export
-remove_duplicate <- function(data, var) {
-
-  quo_var <- dplyr::enquo(var)
-
-  remove_duplicate <- data %>%
-    tidyr::nest_legacy(!!quo_var) %>%
-    dplyr::mutate(
-      !!dplyr::quo_name(quo_var) := purrr::map_chr(
-        data,
-        ~ dplyr::if_else(
-          length(.[[1]]) == 1,
-          .[[1]],
-          NA_character_,
-          NA_character_
-        )
-      )
-    ) %>%
-    dplyr::select(-data)
-
-  return(remove_duplicate)
-}
-
 #' Extract duplicate rows from a data frame.
 #'
 #' @param data A data frame.
