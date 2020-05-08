@@ -15,23 +15,31 @@ recode_id <- function(data, data_recode, vars_id) {
   data_recode <- dplyr::select_at(data_recode, c(vars_id, "column", "value")) %>%
     dplyr::semi_join(data, by = vars_id)
 
-  data_transcode <- data %>%
-    dplyr::select_at(c(vars_id, unique(data_recode$column))) %>%
-    purrr::map_chr(class) %>%
-    dplyr::tibble(column = names(.), class = .)
+  if (nrow(data_recode) == 0) {
 
-  recode <- data %>%
-    dplyr::select_at(c(vars_id, unique(data_recode$column))) %>%
-    tidyr::gather("column", "value", -vars_id) %>%
-    patchr::df_update(data_recode, by = c(vars_id, "column")) %>%
-    dplyr::mutate_at("value", dplyr::na_if, "[null]") %>%
-    tidyr::spread(.data$column, .data$value, fill = NA) %>%
-    patchr::transcode(data_transcode) %>%
-    dplyr::left_join(
-      dplyr::select(data, -unique(data_recode$column)),
-      by = vars_id
-    ) %>%
-    dplyr::select(names(data))
+    recode <- data
+
+  } else {
+
+    data_transcode <- data %>%
+      dplyr::select_at(c(vars_id, unique(data_recode$column))) %>%
+      purrr::map_chr(class) %>%
+      dplyr::tibble(column = names(.), class = .)
+
+    recode <- data %>%
+      dplyr::select_at(c(vars_id, unique(data_recode$column))) %>%
+      tidyr::gather("column", "value", -vars_id) %>%
+      patchr::df_update(data_recode, by = c(vars_id, "column")) %>%
+      dplyr::mutate_at("value", dplyr::na_if, "[null]") %>%
+      tidyr::spread(.data$column, .data$value, fill = NA) %>%
+      patchr::transcode(data_transcode) %>%
+      dplyr::left_join(
+        dplyr::select(data, -unique(data_recode$column)),
+        by = vars_id
+      ) %>%
+      dplyr::select(names(data))
+
+  }
 
   return(recode)
 }
