@@ -21,26 +21,6 @@ filter_data_patch <- function(data, source = NULL, filtre = NULL) {
   return(data)
 }
 
-#' Remove duplicate rows from a table according a column name.
-#'
-#' @param data A data frame.
-#' @param var A variable for which duplicate rows are removed.
-#'
-#' @return A data frame with no duplicate for column name.
-#'
-#' @export
-remove_duplicate <- function(data, var) {
-
-  quo_var <- dplyr::enquo(var)
-
-  remove_duplicate <- data %>%
-    tidyr::nest_legacy(!!quo_var) %>%
-    dplyr::mutate(!!dplyr::quo_name(quo_var) := purrr::map_chr(data, ~ ifelse(length(.[[1]]) == 1, .[[1]], NA_character_))) %>%
-    dplyr::select(-data)
-
-  return(remove_duplicate)
-}
-
 #' Extract duplicate rows from a data frame.
 #'
 #' @param data A data frame.
@@ -60,23 +40,11 @@ remove_duplicate <- function(data, var) {
 #' @export
 duplicate <- function(data, ...){
 
-  if (any(class(data) == "data.frame") == FALSE) {
-    stop("The first paramater must be a data frame", call. = FALSE)
-  }
-
-  group_by <- dplyr::quos(...)
-  if (length(group_by) == 0) {
-    group_by_names <- names(data)
-  } else {
-    group_by_names <- purrr::map_chr(group_by, dplyr::quo_name)
-  }
-
-  duplicate <- dplyr::group_by_at(data, group_by_names) %>%
-    dplyr::filter(dplyr::row_number() >= 2) %>%
-    dplyr::ungroup() %>%
-    dplyr::select(group_by_names) %>%
-    unique() %>%
-    dplyr::right_join(data, ., by = group_by_names)
+  duplicate <- data %>%
+    dplyr::count(..., name = ".duplicate") %>%
+    dplyr::filter(.data$.duplicate >= 2) %>%
+    dplyr::select(-.data$.duplicate) %>%
+    dplyr::right_join(data, ., by = purrr::map_chr(rlang::quos(...), rlang::quo_name))
 
   return(duplicate)
 }
@@ -109,7 +77,7 @@ patch_vector <- function(current, target, only_na = FALSE){
   }
 
   if (only_na == FALSE) {
-    current <- ifelse(!is.na(target), target, current)
+    current <- dplyr::if_else(!is.na(target), target, current)
   } else if (only_na == TRUE) {
     current[which(is.na(current))] <- target[which(is.na(current))]
   }

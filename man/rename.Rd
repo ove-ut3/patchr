@@ -4,14 +4,14 @@
 \alias{rename}
 \title{Rename data frame columns.}
 \usage{
-rename(data, data_rename, normalise_data_colnames = TRUE, drop = TRUE)
+rename(data, data_rename, clean_colnames = TRUE, drop = TRUE)
 }
 \arguments{
 \item{data}{A data frame.}
 
 \item{data_rename}{A correspondance table between old and new column names.}
 
-\item{normalise_data_colnames}{If \code{TRUE} then input data column names are normalised before renamed according to data_rename.}
+\item{clean_colnames}{If \code{TRUE} then input data column names are snake_case normalised before renamed according to data_rename.}
 
 \item{drop}{If \code{TRUE} then all the columns not present in data_rename are removed.}
 }

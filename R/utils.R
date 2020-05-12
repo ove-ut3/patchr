@@ -71,17 +71,10 @@ as_integer <- function(x) {
 
 as_logical <- function(x) {
 
-  if (all(na.omit(x) %in% c("TRUE", "FALSE", "O", "N"))) {
+  if (all(stats::na.omit(x) %in% c("TRUE", "FALSE", "O", "N"))) {
 
     x <- dplyr::if_else(x %in% c("TRUE", "O"), TRUE, FALSE)
 
   }
 
-}
-
-df_partition <- function(data, by) {
-  list(
-    keys = dplyr::select(data, {{ by }}),
-    values = dplyr::select(data, - {{ by }})
-  )
 }
